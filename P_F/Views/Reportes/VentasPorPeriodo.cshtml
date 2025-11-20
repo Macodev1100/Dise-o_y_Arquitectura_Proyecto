@@ -2,100 +2,664 @@
     ViewData["Title"] = "Ventas por Período";
 }
 
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">
-        <i class="fas fa-chart-line me-2"></i>Reporte de Ventas por Período
-    </h1>
-    <a href="@Url.Action("Index", "Reportes")" class="btn btn-secondary btn-sm">
-        <i class="fas fa-arrow-left me-1"></i>Volver a Reportes
-    </a>
-</div>
+<!-- Incluir Chart.js y librerías adicionales -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">
-            <i class="fas fa-filter me-1"></i>Seleccionar Período
-        </h6>
+<div class="container-fluid px-4">
+    <!-- Header del Reporte -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-chart-line text-primary me-2"></i>@ViewData["Title"]
+                    </h1>
+                    <p class="text-muted mb-0">Análisis detallado de ventas e ingresos por período específico</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportarReporte()">
+                        <i class="fas fa-download"></i> PDF
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="exportarExcel()">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                    <a href="@Url.Action("Index", "Reportes")" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i>Volver
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <form method="post" action="@Url.Action("VentasPorPeriodo", "Reportes")">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="fechaInicio">Fecha Inicio</label>
+
+    <!-- Filtros Avanzados -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-gradient-primary text-white">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-filter me-2"></i>
+                <h6 class="mb-0">Filtros de Análisis</h6>
+                <button class="btn btn-sm btn-outline-light ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+        <div class="collapse show" id="filtrosCollapse">
+            <div class="card-body">
+                <form method="post" action="@Url.Action("VentasPorPeriodo", "Reportes")" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="tipoReporte" class="form-label">Tipo de Reporte</label>
+                        <select class="form-select" id="tipoReporte" name="tipoReporte">
+                            <option value="ventas">Ventas Generales</option>
+                            <option value="servicios">Solo Servicios</option>
+                            <option value="repuestos">Solo Repuestos</option>
+                            <option value="comparativo">Comparativo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
                         <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" 
                                value="@DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")" required>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="fechaFin">Fecha Fin</label>
+                    <div class="col-md-3">
+                        <label for="fechaFin" class="form-label">Fecha Fin</label>
                         <input type="date" class="form-control" id="fechaFin" name="fechaFin" 
                                value="@DateTime.Now.ToString("yyyy-MM-dd")" required>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search me-1"></i>Generar Reporte
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <i class="fas fa-search"></i> Generar
                             </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="limpiarFiltros()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones de Acceso Rápido -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-left-primary shadow-sm h-100 quick-filter-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-calendar-alt text-primary fa-2x me-3"></i>
+                        <div>
+                            <h6 class="font-weight-bold text-primary mb-0">Mes Actual</h6>
+                            <small class="text-muted">Desde 1° del mes</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm w-100" onclick="reporteMesActual()">
+                        <i class="fas fa-play me-1"></i>Consultar
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-left-success shadow-sm h-100 quick-filter-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-calendar-week text-success fa-2x me-3"></i>
+                        <div>
+                            <h6 class="font-weight-bold text-success mb-0">Última Semana</h6>
+                            <small class="text-muted">Últimos 7 días</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-success btn-sm w-100" onclick="reporteUltimaSemana()">
+                        <i class="fas fa-play me-1"></i>Consultar
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-left-warning shadow-sm h-100 quick-filter-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-calendar text-warning fa-2x me-3"></i>
+                        <div>
+                            <h6 class="font-weight-bold text-warning mb-0">Año @DateTime.Now.Year</h6>
+                            <small class="text-muted">Enero - Hoy</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-warning btn-sm w-100" onclick="reporteAnual()">
+                        <i class="fas fa-play me-1"></i>Consultar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-left-info shadow-sm h-100 quick-filter-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-chart-bar text-info fa-2x me-3"></i>
+                        <div>
+                            <h6 class="font-weight-bold text-info mb-0">Personalizado</h6>
+                            <small class="text-muted">Rango específico</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-info btn-sm w-100" onclick="mostrarPersonalizado()">
+                        <i class="fas fa-cogs me-1"></i>Configurar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs de Demostración -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow-sm h-100 metric-card">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Ventas del Período
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="125000">
+                                Q 0
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-primary"></i>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow-sm h-100 metric-card">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Órdenes Facturadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="48">
+                                0
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-receipt fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow-sm h-100 metric-card">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Promedio por Orden
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="2604">
+                                Q 0
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calculator fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow-sm h-100 metric-card">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Crecimiento
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <span class="counter-value" data-target="15">0</span>%
+                                <i class="fas fa-arrow-up text-success"></i>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos de Ventas -->
+    <div class="row mb-4">
+        <!-- Gráfico de Tendencia de Ventas -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-area me-2"></i>Tendencia de Ventas Diarias
+                    </h6>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i> Vista
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="cambiarVistaGrafico('area')">Área</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="cambiarVistaGrafico('line')">Líneas</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="cambiarVistaGrafico('bar')">Barras</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="position: relative; height: 400px;">
+                        <canvas id="ventasChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Distribución por Categoría -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>Distribución de Ventas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div style="position: relative; height: 400px;">
+                        <canvas id="distribucionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparativo Mensual -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-column me-2"></i>Comparativo Mensual - Últimos 6 Meses
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div style="position: relative; height: 300px;">
+                        <canvas id="comparativoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Resumen -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-table me-2"></i>Resumen Detallado de Ventas
+                    </h6>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary active" onclick="verTabla('diario')">Diario</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="verTabla('semanal')">Semanal</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="verTabla('mensual')">Mensual</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="tablaVentas">
+                            <thead class="table-light">
+                                <tr>
+                                    <th><i class="fas fa-calendar me-2"></i>Fecha</th>
+                                    <th class="text-center"><i class="fas fa-receipt me-2"></i>Facturas</th>
+                                    <th class="text-center"><i class="fas fa-tools me-2"></i>Servicios</th>
+                                    <th class="text-center"><i class="fas fa-cogs me-2"></i>Repuestos</th>
+                                    <th class="text-center"><i class="fas fa-dollar-sign me-2"></i>Total</th>
+                                    <th class="text-center"><i class="fas fa-percentage me-2"></i>Variación</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaVentasBody">
+                                <!-- Datos de demostración -->
+                                <tr>
+                                    <td><strong>2024-01-15</strong><br><small class="text-muted">Lunes</small></td>
+                                    <td class="text-center"><span class="badge bg-info rounded-pill">3</span></td>
+                                    <td class="text-center">Q 1,850</td>
+                                    <td class="text-center">Q 780</td>
+                                    <td class="text-center"><strong class="text-success">Q 2,630</strong></td>
+                                    <td class="text-center"><span class="badge bg-success">+12%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>2024-01-16</strong><br><small class="text-muted">Martes</small></td>
+                                    <td class="text-center"><span class="badge bg-info rounded-pill">5</span></td>
+                                    <td class="text-center">Q 2,450</td>
+                                    <td class="text-center">Q 1,200</td>
+                                    <td class="text-center"><strong class="text-success">Q 3,650</strong></td>
+                                    <td class="text-center"><span class="badge bg-success">+38%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>2024-01-17</strong><br><small class="text-muted">Miércoles</small></td>
+                                    <td class="text-center"><span class="badge bg-info rounded-pill">2</span></td>
+                                    <td class="text-center">Q 1,200</td>
+                                    <td class="text-center">Q 450</td>
+                                    <td class="text-center"><strong class="text-success">Q 1,650</strong></td>
+                                    <td class="text-center"><span class="badge bg-danger">-55%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Botones de acceso rápido -->
-<div class="row">
-    <div class="col-lg-4 mb-3">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <h6 class="font-weight-bold text-primary">Ventas del Mes Actual</h6>
-                <p class="text-muted small mb-2">Ver las ventas desde el 1° del mes hasta hoy</p>
-                <button class="btn btn-primary btn-sm" onclick="reporteMesActual()">
-                    <i class="fas fa-calendar-alt me-1"></i>Consultar
-                </button>
+<!-- Modal de Configuración Personalizada -->
+<div class="modal fade" id="modalPersonalizado" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-cogs me-2"></i>Reporte Personalizado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-4 mb-3">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <h6 class="font-weight-bold text-success">Últimos 7 Días</h6>
-                <p class="text-muted small mb-2">Ventas de la última semana</p>
-                <button class="btn btn-success btn-sm" onclick="reporteUltimaSemana()">
-                    <i class="fas fa-calendar-week me-1"></i>Consultar
-                </button>
+            <div class="modal-body">
+                <form id="formPersonalizado">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="fechaInicioPersonal" class="form-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicioPersonal" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fechaFinPersonal" class="form-label">Fecha Fin</label>
+                            <input type="date" class="form-control" id="fechaFinPersonal" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="form-label">Incluir en el análisis:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="incluirServicios" checked>
+                                <label class="form-check-label" for="incluirServicios">Servicios de Mecánica</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="incluirRepuestos" checked>
+                                <label class="form-check-label" for="incluirRepuestos">Venta de Repuestos</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="incluirManoObra" checked>
+                                <label class="form-check-label" for="incluirManoObra">Mano de Obra</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-4 mb-3">
-        <div class="card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-                <h6 class="font-weight-bold text-info">Año Actual</h6>
-                <p class="text-muted small mb-2">Todas las ventas del año @DateTime.Now.Year</p>
-                <button class="btn btn-info btn-sm" onclick="reporteAnual()">
-                    <i class="fas fa-calendar me-1"></i>Consultar
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info" onclick="aplicarPersonalizado()">
+                    <i class="fas fa-chart-bar me-2"></i>Generar Reporte
                 </button>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.border-left-primary { border-left: 0.25rem solid #4e73df !important; }
+.border-left-success { border-left: 0.25rem solid #1cc88a !important; }
+.border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
+.border-left-info { border-left: 0.25rem solid #36b9cc !important; }
+
+.metric-card, .quick-filter-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.metric-card:hover, .quick-filter-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.counter-value {
+    opacity: 0;
+    animation: fadeInUp 2s ease-out forwards;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #4e73df, #224abe);
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    background-color: #f8f9fc;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.quick-filter-card:hover button {
+    transform: scale(1.05);
+}
+</style>
 
 @section Scripts {
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarContadores();
+            inicializarGraficoVentas();
+            inicializarGraficoDistribucion();
+            inicializarGraficoComparativo();
+        });
+
+        function inicializarContadores() {
+            const counters = document.querySelectorAll('.counter-value');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target')) || 0;
+                let current = 0;
+                const increment = target / 50;
+                
+                if (counter.textContent.includes('Q')) {
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        counter.textContent = 'Q ' + Math.floor(current).toLocaleString();
+                    }, 40);
+                } else {
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        counter.textContent = Math.floor(current);
+                    }, 40);
+                }
+            });
+        }
+
+        function inicializarGraficoVentas() {
+            const ctx = document.getElementById('ventasChart').getContext('2d');
+            
+            // Datos de demostración
+            const ventasData = {
+                labels: ['Ene 10', 'Ene 11', 'Ene 12', 'Ene 13', 'Ene 14', 'Ene 15', 'Ene 16', 'Ene 17'],
+                datasets: [{
+                    label: 'Ventas Diarias',
+                    data: [2300, 1890, 2650, 3200, 2800, 2630, 3650, 1650],
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: ventasData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Ventas: Q' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: '#858796' }
+                        },
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            ticks: { 
+                                color: '#858796',
+                                callback: function(value) {
+                                    return 'Q' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function inicializarGraficoDistribucion() {
+            const ctx = document.getElementById('distribucionChart').getContext('2d');
+            
+            const distribucionData = {
+                labels: ['Servicios', 'Repuestos', 'Mano de Obra', 'Diagnósticos'],
+                datasets: [{
+                    data: [45, 30, 20, 5],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: distribucionData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: { 
+                                padding: 20, 
+                                usePointStyle: true,
+                                color: '#5a5c69'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+
+        function inicializarGraficoComparativo() {
+            const ctx = document.getElementById('comparativoChart').getContext('2d');
+            
+            const comparativoData = {
+                labels: ['Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre', 'Enero'],
+                datasets: [{
+                    label: 'Ventas 2023',
+                    data: [85000, 92000, 78000, 105000, 88000, 95000],
+                    backgroundColor: 'rgba(28, 200, 138, 0.8)',
+                    borderColor: 'rgba(28, 200, 138, 1)',
+                    borderWidth: 2,
+                    borderRadius: 5
+                }, {
+                    label: 'Ventas 2024',
+                    data: [90000, 98000, 85000, 125000, 110000, 125000],
+                    backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 2,
+                    borderRadius: 5
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: comparativoData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': Q' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: '#858796' }
+                        },
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            ticks: { 
+                                color: '#858796',
+                                callback: function(value) {
+                                    return 'Q' + (value/1000) + 'k';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         function reporteMesActual() {
             const ahora = new Date();
             const primerDia = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
             
             document.getElementById('fechaInicio').value = primerDia.toISOString().split('T')[0];
             document.getElementById('fechaFin').value = ahora.toISOString().split('T')[0];
+            
+            // Enviar formulario automáticamente
+            document.querySelector('form').submit();
         }
 
         function reporteUltimaSemana() {
@@ -105,6 +669,8 @@
             
             document.getElementById('fechaInicio').value = hace7Dias.toISOString().split('T')[0];
             document.getElementById('fechaFin').value = ahora.toISOString().split('T')[0];
+            
+            document.querySelector('form').submit();
         }
 
         function reporteAnual() {
@@ -113,6 +679,58 @@
             
             document.getElementById('fechaInicio').value = primerDiaAno.toISOString().split('T')[0];
             document.getElementById('fechaFin').value = ahora.toISOString().split('T')[0];
+            
+            document.querySelector('form').submit();
+        }
+
+        function mostrarPersonalizado() {
+            const modal = new bootstrap.Modal(document.getElementById('modalPersonalizado'));
+            modal.show();
+        }
+
+        function aplicarPersonalizado() {
+            const fechaInicio = document.getElementById('fechaInicioPersonal').value;
+            const fechaFin = document.getElementById('fechaFinPersonal').value;
+            
+            if (fechaInicio && fechaFin) {
+                document.getElementById('fechaInicio').value = fechaInicio;
+                document.getElementById('fechaFin').value = fechaFin;
+                
+                bootstrap.Modal.getInstance(document.getElementById('modalPersonalizado')).hide();
+                document.querySelector('form').submit();
+            } else {
+                alert('Por favor complete ambas fechas');
+            }
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('tipoReporte').selectedIndex = 0;
+            document.getElementById('fechaInicio').value = '';
+            document.getElementById('fechaFin').value = '';
+        }
+
+        function exportarReporte() {
+            console.log('Exportando reporte a PDF...');
+            alert('Funcionalidad de exportación en desarrollo');
+        }
+
+        function exportarExcel() {
+            console.log('Exportando a Excel...');
+            alert('Funcionalidad de exportación en desarrollo');
+        }
+
+        function cambiarVistaGrafico(tipo) {
+            console.log('Cambiando vista del gráfico a:', tipo);
+            alert('Funcionalidad en desarrollo - Vista ' + tipo);
+        }
+
+        function verTabla(periodo) {
+            // Cambiar botones activos
+            document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            console.log('Mostrando tabla para período:', periodo);
+            alert('Funcionalidad en desarrollo - Vista ' + periodo);
         }
     </script>
 }

@@ -1,306 +1,446 @@
-﻿@{
+@{
     ViewData["Title"] = "Taller Mecánico - Sistema de Gestión";
 }
 
-<div class="jumbotron bg-primary text-white text-center py-5 mb-4">
-    <div class="container">
-        <h1 class="display-4">
-            <i class="fas fa-wrench me-3"></i>
-            Sistema de Gestión - Taller Mecánico P&F
-        </h1>
-        <p class="lead">Gestión integral para talleres mecánicos profesionales</p>
-        <hr class="my-4">
-        <p>Administra clientes, vehículos, órdenes de trabajo, inventario y facturación desde una sola plataforma</p>
-        <a class="btn btn-light btn-lg" href="@Url.Action("Dashboard", "Home")" role="button">
-            <i class="fas fa-tachometer-alt me-2"></i>
-            Ir al Dashboard
-        </a>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="feature-icon bg-primary bg-gradient text-white mb-3">
-                        <i class="fas fa-users fa-3x"></i>
-                    </div>
-                    <h5 class="card-title">Gestión de Clientes</h5>
-                    <p class="card-text">Administra la información de tus clientes, historial de servicios y datos de contacto de forma organizada.</p>
-                    <a href="@Url.Action("Index", "Clientes")" class="btn btn-primary">
-                        <i class="fas fa-arrow-right me-1"></i>Ver Clientes
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="feature-icon bg-success bg-gradient text-white mb-3">
-                        <i class="fas fa-car fa-3x"></i>
-                    </div>
-                    <h5 class="card-title">Control de Vehículos</h5>
-                    <p class="card-text">Registra y gestiona vehículos de clientes con información técnica detallada y historial de servicios.</p>
-                    <a href="@Url.Action("Index", "Vehiculos")" class="btn btn-success">
-                        <i class="fas fa-arrow-right me-1"></i>Ver Vehículos
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="feature-icon bg-warning bg-gradient text-white mb-3">
-                        <i class="fas fa-clipboard-list fa-3x"></i>
-                    </div>
-                    <h5 class="card-title">Órdenes de Trabajo</h5>
-                    <p class="card-text">Crea y gestiona órdenes de trabajo, asigna técnicos y controla el progreso de cada servicio.</p>
-                    <a href="@Url.Action("Index", "OrdenesTrabajo")" class="btn btn-warning">
-                        <i class="fas fa-arrow-right me-1"></i>Ver Órdenes
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="feature-icon bg-info bg-gradient text-white mb-3">
-                        <i class="fas fa-boxes fa-3x"></i>
-                    </div>
-                    <h5 class="card-title">Inventario</h5>
-                    <p class="card-text">Controla el stock de repuestos y materiales, gestiona proveedores y recibe alertas de stock bajo.</p>
-                    <a href="@Url.Action("Index", "Repuestos")" class="btn btn-info">
-                        <i class="fas fa-arrow-right me-1"></i>Ver Inventario
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="feature-icon bg-secondary bg-gradient text-white mb-3">
-                        <i class="fas fa-users-cog fa-3x"></i>
-                    </div>
-                    <h5 class="card-title">Personal</h5>
-                    <p class="card-text">Gestiona empleados, roles, horarios y asignación de trabajos de forma eficiente.</p>
-                    <a href="@Url.Action("Index", "Empleados")" class="btn btn-secondary">
-                        <i class="fas fa-arrow-right me-1"></i>Ver Empleados
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="feature-icon bg-danger bg-gradient text-white mb-3">
-                        <i class="fas fa-file-invoice-dollar fa-3x"></i>
-                    </div>
-                    <h5 class="card-title">Facturación</h5>
-                    <p class="card-text">Genera facturas, controla pagos y mantén un registro completo de todas las transacciones.</p>
-                    <a href="@Url.Action("Index", "Facturas")" class="btn btn-danger">
-                        <i class="fas fa-arrow-right me-1"></i>Ver Facturas
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Estadísticas rápidas -->
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card bg-light">
-                <div class="card-body text-center">
-                    <h5 class="card-title">
-                        <i class="fas fa-chart-line me-2"></i>
-                        Acceso Rápido al Dashboard
-                    </h5>
-                    <p class="card-text">Visualiza las métricas principales de tu taller, órdenes pendientes, ventas y alertas de inventario.</p>
-                    <a href="@Url.Action("Dashboard", "Home")" class="btn btn-primary btn-lg">
-                        <i class="fas fa-tachometer-alt me-2"></i>
-                        Ver Dashboard Completo
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 4rem 0;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+        pointer-events: none;
+    }
+
+    .feature-card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        height: 100%;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
     .feature-icon {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
+        margin: 0 auto 2rem auto;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-icon i {
+        font-size: 2.5rem;
+        z-index: 2;
+        position: relative;
+    }
+
+    .feature-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, currentColor, rgba(255,255,255,0.2));
+        border-radius: 50%;
+    }
+
+    .icon-primary { background: linear-gradient(135deg, #4e73df, #6f9ceb); color: white; }
+    .icon-success { background: linear-gradient(135deg, #1cc88a, #36d9ac); color: white; }
+    .icon-warning { background: linear-gradient(135deg, #f6c23e, #f8d866); color: white; }
+    .icon-info { background: linear-gradient(135deg, #36b9cc, #5bc0d4); color: white; }
+    .icon-danger { background: linear-gradient(135deg, #e74a3b, #ea6962); color: white; }
+    .icon-secondary { background: linear-gradient(135deg, #858796, #a6a9bd); color: white; }
+
+    .stats-section {
+        background: #f8f9fc;
+        padding: 3rem 0;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .stat-value {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #4e73df;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+
+    .cta-section {
+        background: white;
+        padding: 3rem 0;
+    }
+
+    .dashboard-preview {
+        background: #f8f9fc;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: inset 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .btn-action {
+        border-radius: 50px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .btn-action::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-action:hover::before {
+        left: 100%;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    .section-title p {
+        font-size: 1.1rem;
+        color: #6c757d;
+        max-width: 600px;
         margin: 0 auto;
     }
-    
-    .jumbotron {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    .quick-actions {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-    
-    .card {
-        transition: transform 0.2s ease-in-out;
+
+    .quick-action-btn {
+        display: block;
+        width: 100%;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
     }
-    
-    .card:hover {
-        transform: translateY(-5px);
+
+    .quick-action-btn:hover {
+        transform: translateX(10px);
+        text-decoration: none;
+        border-color: currentColor;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-section {
+            padding: 2rem 0;
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .feature-icon i {
+            font-size: 2rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+        }
     }
 </style>
-        </h1>
-    </div>
-</div>
 
-
-
-<!-- Actividad Reciente -->
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-list me-2"></i>Órdenes Recientes
-                </h6>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-wrench me-3"></i>
+                    Sistema de Gestión P&F
+                </h1>
+                <p class="lead mb-4">
+                    Gestión integral para talleres mecánicos profesionales
+                </p>
+                <p class="fs-5 mb-4">
+                    Administra clientes, vehículos, órdenes de trabajo, inventario y facturación desde una plataforma unificada
+                </p>
+                <a href="@Url.Action("Dashboard", "Home")" class="btn btn-light btn-action">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Acceder al Dashboard
+                </a>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Orden #</th>
-                                <th>Cliente</th>
-                                <th>Vehículo</th>
-                                <th>Estado</th>
-                                <th>Fecha</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>ORD-202511-000001</strong></td>
-                                <td>Juan Pérez</td>
-                                <td>ABC-123</td>
-                                <td><span class="badge bg-warning">Pendiente</span></td>
-                                <td>19/11/2025</td>
-                                <td>
-                                    <a href="#" class="btn btn-sm btn-outline-primary">Ver</a>
-                                </td>
-                            </tr>
-                            <!-- Más filas se cargarán dinámicamente -->
-                        </tbody>
-                    </table>
+        </div>
+    </div>
+</section>
+
+<!-- Módulos Principales -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-title">
+            <h2>Módulos del Sistema</h2>
+            <p>Gestiona todos los aspectos de tu taller desde módulos especializados e integrados</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Gestión de Clientes -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon icon-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Gestión de Clientes</h5>
+                        <p class="card-text text-muted mb-4">
+                            Administra información completa de clientes, historial de servicios y seguimiento personalizado.
+                        </p>
+                        <a href="@Url.Action("Index", "Clientes")" class="btn btn-primary btn-action">
+                            Gestionar Clientes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control de Vehículos -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon icon-success">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Control de Vehículos</h5>
+                        <p class="card-text text-muted mb-4">
+                            Registra vehículos con especificaciones técnicas detalladas e historial completo de servicios.
+                        </p>
+                        <a href="@Url.Action("Index", "Vehiculos")" class="btn btn-success btn-action">
+                            Gestionar Vehículos
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Órdenes de Trabajo -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon icon-warning">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Órdenes de Trabajo</h5>
+                        <p class="card-text text-muted mb-4">
+                            Crea, asigna y controla órdenes de trabajo con seguimiento en tiempo real del progreso.
+                        </p>
+                        <a href="@Url.Action("Index", "OrdenesTrabajo")" class="btn btn-warning btn-action">
+                            Gestionar Órdenes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventario -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon icon-info">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Inventario</h5>
+                        <p class="card-text text-muted mb-4">
+                            Controla stock de repuestos, gestiona proveedores y recibe alertas automáticas de reabastecimiento.
+                        </p>
+                        <a href="@Url.Action("Index", "Repuestos")" class="btn btn-info btn-action">
+                            Gestionar Inventario
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon icon-secondary">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Gestión de Personal</h5>
+                        <p class="card-text text-muted mb-4">
+                            Administra empleados, roles, horarios y asignación de trabajos de manera eficiente.
+                        </p>
+                        <a href="@Url.Action("Index", "Empleados")" class="btn btn-secondary btn-action">
+                            Gestionar Personal
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facturación -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon icon-danger">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Facturación</h5>
+                        <p class="card-text text-muted mb-4">
+                            Genera facturas profesionales, controla pagos y mantén registro completo de transacciones.
+                        </p>
+                        <a href="@Url.Action("Index", "Facturas")" class="btn btn-danger btn-action">
+                            Gestionar Facturas
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-lg-4">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-bell me-2"></i>Notificaciones
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Stock Bajo:</strong> Filtro de aceite - Solo quedan 3 unidades
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</section>
+
+<!-- Estadísticas del Sistema -->
+<section class="stats-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Rendimiento del Taller</h2>
+            <p>Métricas clave para monitorear la productividad y eficiencia del negocio</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Clientes Activos</div>
                 </div>
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <i class="fas fa-clock me-2"></i>
-                    <strong>Recordatorio:</strong> Orden #ORD-001 vence mañana
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-value">28</div>
+                    <div class="stat-label">Órdenes Completadas</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-value">Q215K</div>
+                    <div class="stat-label">Facturación Mensual</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-value">94%</div>
+                    <div class="stat-label">Satisfacción Cliente</div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- Modal de Búsqueda Rápida de Cliente -->
-<div class="modal fade" id="buscarClienteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-search me-2"></i>Buscar Cliente
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="buscarInput" class="form-label">Nombre, Documento o Teléfono:</label>
-                    <input type="text" class="form-control" id="buscarInput" placeholder="Ingrese el término de búsqueda...">
+<!-- Dashboard Preview -->
+<section class="cta-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-3">Dashboard Completo</h2>
+                <p class="fs-5 text-muted mb-4">
+                    Accede a métricas en tiempo real, análisis de productividad y reportes detallados para tomar decisiones informadas sobre tu negocio.
+                </p>
+                <div class="quick-actions mb-4">
+                    <h6 class="fw-bold mb-3">Acciones Rápidas:</h6>
+                    <a href="@Url.Action("Create", "OrdenTrabajo")" class="quick-action-btn text-primary">
+                        <i class="fas fa-plus-circle me-3"></i>
+                        <strong>Nueva Orden de Trabajo</strong>
+                    </a>
+                    <a href="@Url.Action("Create", "Clientes")" class="quick-action-btn text-success">
+                        <i class="fas fa-user-plus me-3"></i>
+                        <strong>Registrar Cliente</strong>
+                    </a>
+                    <a href="@Url.Action("Index", "Reportes")" class="quick-action-btn text-info">
+                        <i class="fas fa-chart-bar me-3"></i>
+                        <strong>Ver Reportes</strong>
+                    </a>
                 </div>
-                <div id="resultadosBusqueda">
-                    <!-- Los resultados se mostrarán aquí -->
+                <a href="@Url.Action("Dashboard", "Home")" class="btn btn-primary btn-lg btn-action">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Ir al Dashboard Completo
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <div class="dashboard-preview">
+                    <div class="text-center">
+                        <i class="fas fa-chart-line fa-5x text-primary mb-3"></i>
+                        <h5 class="fw-bold text-primary">Panel de Control Avanzado</h5>
+                        <p class="text-muted">
+                            Visualiza KPIs, gráficos interactivos y alertas importantes en una interfaz moderna y profesional.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-@section Scripts {
-    <script>
-        // Búsqueda rápida de clientes
-        $('#buscarInput').on('keyup', function() {
-            var termino = $(this).val();
-            if (termino.length >= 2) {
-                $.get('@Url.Action("BuscarCliente", "Home")', { termino: termino }, function(data) {
-                    var html = '';
-                    if (data.length > 0) {
-                        html += '<div class="list-group">';
-                        $.each(data, function(index, cliente) {
-                            html += '<a href="@Url.Action("Details", "Clientes")/' + cliente.id + '" class="list-group-item list-group-item-action">';
-                            html += '<h6 class="mb-1">' + cliente.nombre + '</h6>';
-                            html += '<small>Doc: ' + cliente.documento + ' | Tel: ' + cliente.telefono + '</small>';
-                            html += '</a>';
-                        });
-                        html += '</div>';
-                    } else {
-                        html = '<p class="text-muted">No se encontraron clientes.</p>';
-                    }
-                    $('#resultadosBusqueda').html(html);
-                });
-            } else {
-                $('#resultadosBusqueda').html('');
-            }
-        });
-
-        // Auto-refresh de datos cada 5 minutos
-        setInterval(function() {
-            location.reload();
-        }, 300000);
-    </script>
-}
-
-<style>
-    .border-left-warning {
-        border-left: 0.25rem solid #f6c23e !important;
-    }
-    .border-left-primary {
-        border-left: 0.25rem solid #4e73df !important;
-    }
-    .border-left-success {
-        border-left: 0.25rem solid #1cc88a !important;
-    }
-    .border-left-info {
-        border-left: 0.25rem solid #36b9cc !important;
-    }
-    
-    .card {
-        transition: transform 0.2s;
-    }
-    
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
-    }
-</style>
+</section>

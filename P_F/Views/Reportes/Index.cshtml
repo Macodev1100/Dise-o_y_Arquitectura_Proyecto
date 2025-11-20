@@ -2,207 +2,592 @@
     ViewData["Title"] = "Sistema de Reportes";
 }
 
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">
-        <i class="fas fa-chart-bar me-2"></i>Sistema de Reportes
-    </h1>
+<!-- Incluir Chart.js para gráficos interactivos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container-fluid px-4">
+    <!-- Header Principal -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-chart-bar text-primary me-2"></i>@ViewData["Title"]
+                    </h1>
+                    <p class="text-muted mb-0">Centro de análisis y reportes empresariales</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportarTodosReportes()">
+                        <i class="fas fa-download"></i> Exportar Todo
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="programarReportes()">
+                        <i class="fas fa-clock"></i> Programar
+                    </button>
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="configurarAlertas()">
+                        <i class="fas fa-bell"></i> Alertas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard de Métricas Rápidas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow-sm h-100 metric-card" onclick="location.href='@Url.Action("VentasPorPeriodo")'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Ventas Este Mes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="125000">
+                                Q 0
+                            </div>
+                            <small class="text-success"><i class="fas fa-arrow-up"></i> +12% vs mes anterior</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow-sm h-100 metric-card" onclick="location.href='@Url.Action("OrdenesPorEstado")'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Órdenes Activas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="28">
+                                0
+                            </div>
+                            <small class="text-warning"><i class="fas fa-clock"></i> 8 pendientes entrega</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow-sm h-100 metric-card" onclick="location.href='@Url.Action("ClientesFrecuentes")'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Clientes Nuevos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="15">
+                                0
+                            </div>
+                            <small class="text-info"><i class="fas fa-users"></i> Este mes</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-plus fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow-sm h-100 metric-card" onclick="location.href='@Url.Action("InventarioCritico")'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Stock Crítico
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="7">
+                                0
+                            </div>
+                            <small class="text-danger"><i class="fas fa-exclamation-triangle"></i> Requieren atención</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-boxes fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Reportes por Categorías -->
+    <div class="row">
+        <!-- Reportes de Ventas -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100 category-card">
+                <div class="card-header bg-gradient-primary text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-chart-line fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-0 font-weight-bold">Reportes de Ventas</h6>
+                            <small>Análisis de ingresos y tendencias comerciales</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="@Url.Action("VentasPorPeriodo")" class="btn btn-outline-primary btn-lg report-btn">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-alt me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Ventas por Período</div>
+                                    <small class="text-muted">Análisis detallado de ventas por fecha</small>
+                                </div>
+                            </div>
+                        </a>
+                        <button class="btn btn-outline-success btn-lg report-btn" onclick="reporteVentasMes()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-bar me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Ventas del Mes</div>
+                                    <small class="text-muted">Resumen del mes en curso</small>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="btn btn-outline-info btn-lg report-btn" onclick="reporteVentasAnual()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-area me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Resumen Anual</div>
+                                    <small class="text-muted">Análisis anual completo</small>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes de Inventario -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100 category-card">
+                <div class="card-header bg-gradient-warning text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-boxes fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-0 font-weight-bold">Reportes de Inventario</h6>
+                            <small>Control de stock y movimientos</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="@Url.Action("InventarioCritico")" class="btn btn-outline-danger btn-lg report-btn">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Stock Crítico</div>
+                                    <small class="text-muted">Repuestos con stock bajo</small>
+                                </div>
+                            </div>
+                        </a>
+                        <button class="btn btn-outline-warning btn-lg report-btn" onclick="reporteMovimientos()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exchange-alt me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Movimientos</div>
+                                    <small class="text-muted">Entradas y salidas de inventario</small>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="btn btn-outline-info btn-lg report-btn" onclick="reporteRepuestosMasUsados()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-star me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Repuestos Populares</div>
+                                    <small class="text-muted">Más utilizados y vendidos</small>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes de Personal -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100 category-card">
+                <div class="card-header bg-gradient-secondary text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-users-cog fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-0 font-weight-bold">Reportes de Personal</h6>
+                            <small>Productividad y rendimiento del equipo</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="@Url.Action("ProductividadEmpleados")" class="btn btn-outline-secondary btn-lg report-btn">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-check me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Productividad</div>
+                                    <small class="text-muted">Análisis de rendimiento por empleado</small>
+                                </div>
+                            </div>
+                        </a>
+                        <button class="btn btn-outline-primary btn-lg report-btn" onclick="reporteHorasTrabajo()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-clock me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Horas de Trabajo</div>
+                                    <small class="text-muted">Control de tiempo y asistencia</small>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="btn btn-outline-success btn-lg report-btn" onclick="reporteRendimiento()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-trophy me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Rendimiento</div>
+                                    <small class="text-muted">Evaluación por técnico</small>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes de Órdenes -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100 category-card">
+                <div class="card-header bg-gradient-info text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-clipboard-list fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-0 font-weight-bold">Reportes de Órdenes</h6>
+                            <small>Seguimiento y análisis de trabajos</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="@Url.Action("OrdenesPorEstado")" class="btn btn-outline-info btn-lg report-btn">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-pie me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Por Estado</div>
+                                    <small class="text-muted">Distribución por estado actual</small>
+                                </div>
+                            </div>
+                        </a>
+                        <button class="btn btn-outline-warning btn-lg report-btn" onclick="reporteTiempoPromedio()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-stopwatch me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Tiempo Promedio</div>
+                                    <small class="text-muted">Duración de reparaciones</small>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="btn btn-outline-danger btn-lg report-btn" onclick="reporteOrdenesVencidas()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-circle me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Órdenes Vencidas</div>
+                                    <small class="text-muted">Trabajos atrasados</small>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes de Clientes -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100 category-card">
+                <div class="card-header bg-gradient-success text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-users fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-0 font-weight-bold">Reportes de Clientes</h6>
+                            <small>Análisis de base de clientes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="@Url.Action("ClientesFrecuentes")" class="btn btn-outline-success btn-lg report-btn">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-heart me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Clientes Frecuentes</div>
+                                    <small class="text-muted">Los más leales y rentables</small>
+                                </div>
+                            </div>
+                        </a>
+                        <button class="btn btn-outline-info btn-lg report-btn" onclick="reporteNuevosClientes()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-plus me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Nuevos Clientes</div>
+                                    <small class="text-muted">Crecimiento de la base</small>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="btn btn-outline-primary btn-lg report-btn" onclick="reporteSatisfaccion()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-smile me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Satisfacción</div>
+                                    <small class="text-muted">Evaluaciones y feedback</small>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes Financieros -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100 category-card">
+                <div class="card-header bg-gradient-danger text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-0 font-weight-bold">Reportes Financieros</h6>
+                            <small>Análisis económico y contable</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-outline-danger btn-lg report-btn" onclick="reporteFacturacion()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-file-alt me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Facturación</div>
+                                    <small class="text-muted">Ingresos por facturación</small>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="btn btn-outline-success btn-lg report-btn" onclick="reporteCuentasPorCobrar()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-money-bill-wave me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Cuentas por Cobrar</div>
+                                    <small class="text-muted">Pendientes de pago</small>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="btn btn-outline-info btn-lg report-btn" onclick="reporteFlujoCaja()">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-line me-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold">Flujo de Caja</div>
+                                    <small class="text-muted">Entradas y salidas de efectivo</small>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="row">
-    <!-- Reportes de Ventas -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow h-100">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-dollar-sign me-1"></i>Reportes de Ventas
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="@Url.Action("VentasPorPeriodo")" class="btn btn-outline-primary">
-                        <i class="fas fa-calendar-alt me-2"></i>
-                        Ventas por Período
-                    </a>
-                    <a href="#" class="btn btn-outline-success" onclick="reporteVentasMes()">
-                        <i class="fas fa-chart-line me-2"></i>
-                        Ventas del Mes Actual
-                    </a>
-                    <a href="#" class="btn btn-outline-info" onclick="reporteVentasAnual()">
-                        <i class="fas fa-chart-area me-2"></i>
-                        Resumen Anual
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reportes de Inventario -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow h-100">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-warning">
-                    <i class="fas fa-boxes me-1"></i>Reportes de Inventario
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="@Url.Action("InventarioCritico")" class="btn btn-outline-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Stock Crítico
-                    </a>
-                    <a href="#" class="btn btn-outline-warning" onclick="reporteMovimientos()">
-                        <i class="fas fa-exchange-alt me-2"></i>
-                        Movimientos de Inventario
-                    </a>
-                    <a href="#" class="btn btn-outline-info" onclick="reporteRepuestosMasUsados()">
-                        <i class="fas fa-star me-2"></i>
-                        Repuestos Más Utilizados
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reportes de Empleados -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow h-100">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-secondary">
-                    <i class="fas fa-users-cog me-1"></i>Reportes de Personal
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="@Url.Action("ProductividadEmpleados")" class="btn btn-outline-secondary">
-                        <i class="fas fa-user-check me-2"></i>
-                        Productividad de Empleados
-                    </a>
-                    <a href="#" class="btn btn-outline-primary" onclick="reporteHorasTrabajo()">
-                        <i class="fas fa-clock me-2"></i>
-                        Horas de Trabajo
-                    </a>
-                    <a href="#" class="btn btn-outline-success" onclick="reporteRendimiento()">
-                        <i class="fas fa-trophy me-2"></i>
-                        Rendimiento por Técnico
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reportes de Órdenes -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow h-100">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-info">
-                    <i class="fas fa-clipboard-list me-1"></i>Reportes de Órdenes
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="@Url.Action("OrdenesPorEstado")" class="btn btn-outline-info">
-                        <i class="fas fa-chart-pie me-2"></i>
-                        Órdenes por Estado
-                    </a>
-                    <a href="#" class="btn btn-outline-warning" onclick="reporteTiempoPromedio()">
-                        <i class="fas fa-stopwatch me-2"></i>
-                        Tiempo Promedio de Reparación
-                    </a>
-                    <a href="#" class="btn btn-outline-danger" onclick="reporteOrdenesVencidas()">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        Órdenes Vencidas
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reportes de Clientes -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow h-100">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-success">
-                    <i class="fas fa-users me-1"></i>Reportes de Clientes
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="@Url.Action("ClientesFrecuentes")" class="btn btn-outline-success">
-                        <i class="fas fa-heart me-2"></i>
-                        Clientes Frecuentes
-                    </a>
-                    <a href="#" class="btn btn-outline-info" onclick="reporteNuevosClientes()">
-                        <i class="fas fa-user-plus me-2"></i>
-                        Nuevos Clientes
-                    </a>
-                    <a href="#" class="btn btn-outline-primary" onclick="reporteSatisfaccion()">
-                        <i class="fas fa-smile me-2"></i>
-                        Satisfacción del Cliente
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reportes Financieros -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow h-100">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-danger">
-                    <i class="fas fa-file-invoice-dollar me-1"></i>Reportes Financieros
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="#" class="btn btn-outline-danger" onclick="reporteFacturacion()">
-                        <i class="fas fa-file-alt me-2"></i>
-                        Facturación Mensual
-                    </a>
-                    <a href="#" class="btn btn-outline-success" onclick="reporteCuentasPorCobrar()">
-                        <i class="fas fa-money-bill-wave me-2"></i>
-                        Cuentas por Cobrar
-                    </a>
-                    <a href="#" class="btn btn-outline-info" onclick="reporteFlujoCaja()">
-                        <i class="fas fa-chart-line me-2"></i>
-                        Flujo de Caja
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para filtros de fecha -->
+<!-- Modal para filtros de fecha mejorado -->
 <div class="modal fade" id="filtroFechaModal" tabindex="-1" aria-labelledby="filtroFechaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="filtroFechaModalLabel">Seleccionar Período</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header bg-primary text-white">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-filter fa-2x me-3"></i>
+                    <div>
+                        <h5 class="modal-title mb-0" id="filtroFechaModalLabel">Configurar Reporte</h5>
+                        <small id="tipoReporteSubtitle">Seleccione el período de análisis</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="filtroFechaForm">
-                    <div class="mb-3">
-                        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
-                        <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fechaInicio" class="form-label">
+                                    <i class="fas fa-calendar me-2"></i>Fecha Inicio
+                                </label>
+                                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fechaFin" class="form-label">
+                                    <i class="fas fa-calendar me-2"></i>Fecha Fin
+                                </label>
+                                <input type="date" class="form-control" id="fechaFin" name="fechaFin" required>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <!-- Filtros rápidos -->
                     <div class="mb-3">
-                        <label for="fechaFin" class="form-label">Fecha Fin</label>
-                        <input type="date" class="form-control" id="fechaFin" name="fechaFin" required>
+                        <label class="form-label">Períodos Predefinidos:</label>
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setearPeriodo('semana')">Última Semana</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setearPeriodo('mes')">Este Mes</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setearPeriodo('trimestre')">Trimestre</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setearPeriodo('ano')">Este Año</button>
+                        </div>
+                    </div>
+
+                    <!-- Opciones adicionales dependiendo del tipo de reporte -->
+                    <div id="opcionesAdicionales" class="mt-3" style="display: none;">
+                        <hr>
+                        <label class="form-label">Opciones Adicionales:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="incluirFinDeSemana" checked>
+                            <label class="form-check-label" for="incluirFinDeSemana">Incluir fines de semana</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="excluirFeriados">
+                            <label class="form-check-label" for="excluirFeriados">Excluir días feriados</label>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="ejecutarReporte()">Generar Reporte</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="ejecutarReporte()">
+                    <i class="fas fa-chart-bar me-2"></i>Generar Reporte
+                </button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modales adicionales -->
+<div class="modal fade" id="modalProgramarReportes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-clock me-2"></i>Programar Reportes Automáticos
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Configure reportes automáticos que se enviarán por email según la frecuencia seleccionada.
+                </div>
+                <p>Esta funcionalidad estará disponible próximamente.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.border-left-primary { border-left: 0.25rem solid #4e73df !important; }
+.border-left-success { border-left: 0.25rem solid #1cc88a !important; }
+.border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
+.border-left-danger { border-left: 0.25rem solid #e74a3b !important; }
+
+.metric-card, .category-card, .report-btn {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.metric-card:hover, .category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.report-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.counter-value {
+    opacity: 0;
+    animation: fadeInUp 2s ease-out forwards;
+}
+
+.bg-gradient-primary { background: linear-gradient(45deg, #4e73df, #224abe); }
+.bg-gradient-success { background: linear-gradient(45deg, #1cc88a, #13855c); }
+.bg-gradient-warning { background: linear-gradient(45deg, #f6c23e, #dda20a); }
+.bg-gradient-info { background: linear-gradient(45deg, #36b9cc, #2c9faf); }
+.bg-gradient-secondary { background: linear-gradient(45deg, #858796, #717384); }
+.bg-gradient-danger { background: linear-gradient(45deg, #e74a3b, #c0392b); }
+
+.card {
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.card-header {
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.report-btn {
+    text-align: left;
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+
+.category-card .card-header {
+    padding: 1.5rem 1.25rem 1rem;
+}
+
+.category-card .card-body {
+    padding: 1.25rem;
+}
+</style>
+
 @section Scripts {
     <script>
         let accionReporte = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarContadores();
+        });
+
+        function inicializarContadores() {
+            const counters = document.querySelectorAll('.counter-value');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target')) || 0;
+                let current = 0;
+                const increment = target / 50;
+                
+                if (counter.textContent.includes('Q')) {
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        counter.textContent = 'Q ' + Math.floor(current).toLocaleString();
+                    }, 40);
+                } else {
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        counter.textContent = Math.floor(current);
+                    }, 40);
+                }
+            });
+        }
 
         function reporteVentasMes() {
             const ahora = new Date();
@@ -225,53 +610,55 @@
         }
 
         function reporteMovimientos() {
-            mostrarFiltroFecha('movimientos');
+            mostrarFiltroFecha('movimientos', 'Movimientos de Inventario');
         }
 
         function reporteRepuestosMasUsados() {
-            mostrarFiltroFecha('repuestosMasUsados');
+            mostrarFiltroFecha('repuestosMasUsados', 'Repuestos Más Utilizados');
         }
 
         function reporteHorasTrabajo() {
-            mostrarFiltroFecha('horasTrabajo');
+            mostrarFiltroFecha('horasTrabajo', 'Horas de Trabajo');
         }
 
         function reporteRendimiento() {
-            mostrarFiltroFecha('rendimiento');
+            mostrarFiltroFecha('rendimiento', 'Rendimiento por Técnico');
         }
 
         function reporteTiempoPromedio() {
-            mostrarFiltroFecha('tiempoPromedio');
+            mostrarFiltroFecha('tiempoPromedio', 'Tiempo Promedio de Reparación');
         }
 
         function reporteOrdenesVencidas() {
-            // Este reporte no necesita filtro de fecha
-            alert('Funcionalidad en desarrollo');
+            alert('Mostrando órdenes vencidas - Funcionalidad en desarrollo');
         }
 
         function reporteNuevosClientes() {
-            mostrarFiltroFecha('nuevosClientes');
+            mostrarFiltroFecha('nuevosClientes', 'Nuevos Clientes');
         }
 
         function reporteSatisfaccion() {
-            mostrarFiltroFecha('satisfaccion');
+            mostrarFiltroFecha('satisfaccion', 'Satisfacción del Cliente');
         }
 
         function reporteFacturacion() {
-            mostrarFiltroFecha('facturacion');
+            mostrarFiltroFecha('facturacion', 'Facturación Mensual');
         }
 
         function reporteCuentasPorCobrar() {
-            // Este reporte no necesita filtro de fecha
-            alert('Funcionalidad en desarrollo');
+            alert('Mostrando cuentas por cobrar - Funcionalidad en desarrollo');
         }
 
         function reporteFlujoCaja() {
-            mostrarFiltroFecha('flujoCaja');
+            mostrarFiltroFecha('flujoCaja', 'Flujo de Caja');
         }
 
-        function mostrarFiltroFecha(accion) {
+        function mostrarFiltroFecha(accion, titulo) {
             accionReporte = accion;
+            
+            // Actualizar título del modal
+            document.getElementById('filtroFechaModalLabel').textContent = titulo;
+            document.getElementById('tipoReporteSubtitle').textContent = `Configurar período para ${titulo.toLowerCase()}`;
             
             // Establecer fechas por defecto (último mes)
             const ahora = new Date();
@@ -282,6 +669,34 @@
             document.getElementById('fechaFin').value = ahora.toISOString().split('T')[0];
             
             new bootstrap.Modal(document.getElementById('filtroFechaModal')).show();
+        }
+
+        function setearPeriodo(tipo) {
+            const ahora = new Date();
+            let fechaInicio, fechaFin;
+            
+            switch(tipo) {
+                case 'semana':
+                    fechaInicio = new Date();
+                    fechaInicio.setDate(ahora.getDate() - 7);
+                    fechaFin = ahora;
+                    break;
+                case 'mes':
+                    fechaInicio = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+                    fechaFin = ahora;
+                    break;
+                case 'trimestre':
+                    fechaInicio = new Date(ahora.getFullYear(), ahora.getMonth() - 2, 1);
+                    fechaFin = ahora;
+                    break;
+                case 'ano':
+                    fechaInicio = new Date(ahora.getFullYear(), 0, 1);
+                    fechaFin = ahora;
+                    break;
+            }
+            
+            document.getElementById('fechaInicio').value = fechaInicio.toISOString().split('T')[0];
+            document.getElementById('fechaFin').value = fechaFin.toISOString().split('T')[0];
         }
 
         function ejecutarReporte() {
@@ -299,9 +714,27 @@
             }
             
             // Por ahora mostrar mensaje de desarrollo
-            alert(`Reporte de ${accionReporte} del ${fechaInicio} al ${fechaFin} - Funcionalidad en desarrollo`);
+            alert(`Generando reporte de ${accionReporte} del ${fechaInicio} al ${fechaFin}\n\nEsta funcionalidad estará disponible próximamente.`);
             
             bootstrap.Modal.getInstance(document.getElementById('filtroFechaModal')).hide();
+        }
+
+        function exportarTodosReportes() {
+            alert('Funcionalidad de exportación masiva en desarrollo');
+        }
+
+        function programarReportes() {
+            const modal = new bootstrap.Modal(document.getElementById('modalProgramarReportes'));
+            modal.show();
+        }
+
+        function configurarAlertas() {
+            alert('Configuración de alertas automáticas - Funcionalidad en desarrollo\n\n' +
+                  'Permitirá configurar:\n' +
+                  '• Alertas de stock bajo\n' +
+                  '• Órdenes vencidas\n' +
+                  '• Metas de ventas\n' +
+                  '• Reportes automáticos');
         }
     </script>
 }
