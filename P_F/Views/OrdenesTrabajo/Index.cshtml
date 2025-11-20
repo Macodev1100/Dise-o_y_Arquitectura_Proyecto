@@ -1,0 +1,280 @@
+@model IEnumerable<P_F.Models.Entities.OrdenTrabajo>
+
+@{
+    ViewData["Title"] = "Órdenes de Trabajo";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-clipboard-list me-2"></i>Órdenes de Trabajo
+    </h1>
+    <a href="@Url.Action("Create")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50 me-1"></i>Nueva Orden
+    </a>
+</div>
+
+<!-- Filtros y Búsqueda -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-filter me-1"></i>Filtros de Búsqueda
+        </h6>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="searchString" class="form-label">Buscar</label>
+                <input type="text" class="form-control" id="searchString" name="searchString" 
+                       value="@ViewData["CurrentFilter"]" placeholder="Número, cliente, placa...">
+            </div>
+            <div class="col-md-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-control" id="estado" name="estado">
+                    <option value="">Todos los estados</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="EnProceso">En Proceso</option>
+                    <option value="Pausada">Pausada</option>
+                    <option value="Completada">Completada</option>
+                    <option value="Entregada">Entregada</option>
+                    <option value="Cancelada">Cancelada</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="clienteId" class="form-label">Cliente</label>
+                <select class="form-control" id="clienteId" name="clienteId">
+                    <option value="">Todos los clientes</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i>Buscar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Resumen de Estados -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Órdenes</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            En Proceso</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.Count(o => o.Estado == EstadoOrden.EnProceso)
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-tools fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pendientes</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                            @Model.Count(o => o.Estado == EstadoOrden.Pendiente)
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Completadas</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.Count(o => o.Estado == EstadoOrden.Completada || o.Estado == EstadoOrden.Entregada)
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Órdenes -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            Lista de Órdenes de Trabajo
+        </h6>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Número</th>
+                            <th>Fecha Ingreso</th>
+                            <th>Cliente</th>
+                            <th>Vehículo</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Mecánico</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong class="text-primary">@item.NumeroOrden</strong>
+                                </td>
+                                <td>@item.FechaIngreso.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (item.Cliente != null)
+                                    {
+                                        <a href="@Url.Action("Details", "Clientes", new { id = item.Cliente.ClienteId })" 
+                                           class="text-decoration-none">
+                                            @item.Cliente.Nombre @item.Cliente.Apellido
+                                        </a>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Vehiculo != null)
+                                    {
+                                        <span class="badge bg-dark">@item.Vehiculo.Placa</span>
+                                        <small class="text-muted d-block">@item.Vehiculo.Marca @item.Vehiculo.Modelo</small>
+                                    }
+                                </td>
+                                <td>
+                                    @switch (item.Estado)
+                                    {
+                                        case EstadoOrden.Pendiente:
+                                            <span class="badge bg-secondary">Pendiente</span>
+                                            break;
+                                        case EstadoOrden.EnProceso:
+                                            <span class="badge bg-warning">En Proceso</span>
+                                            break;
+                                        case EstadoOrden.Pausada:
+                                            <span class="badge bg-info">Pausada</span>
+                                            break;
+                                        case EstadoOrden.Completada:
+                                            <span class="badge bg-success">Completada</span>
+                                            break;
+                                        case EstadoOrden.Entregada:
+                                            <span class="badge bg-primary">Entregada</span>
+                                            break;
+                                        case EstadoOrden.Cancelada:
+                                            <span class="badge bg-danger">Cancelada</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @switch (item.Prioridad)
+                                    {
+                                        case Prioridad.Baja:
+                                            <span class="badge bg-light text-dark">Baja</span>
+                                            break;
+                                        case Prioridad.Normal:
+                                            <span class="badge bg-secondary">Normal</span>
+                                            break;
+                                        case Prioridad.Alta:
+                                            <span class="badge bg-warning">Alta</span>
+                                            break;
+                                        case Prioridad.Urgente:
+                                            <span class="badge bg-danger">Urgente</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.EmpleadoAsignado != null)
+                                    {
+                                        <span>@item.EmpleadoAsignado.Nombre @item.EmpleadoAsignado.Apellido</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin asignar</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Total > 0)
+                                    {
+                                        <strong class="text-success">$@item.Total.ToString("N2")</strong>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Pendiente</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="@Url.Action("Details", new { id = item.OrdenTrabajoId })" 
+                                           class="btn btn-sm btn-info" title="Ver Detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (item.Estado != EstadoOrden.Entregada && item.Estado != EstadoOrden.Cancelada)
+                                        {
+                                            <a href="@Url.Action("Edit", new { id = item.OrdenTrabajoId })" 
+                                               class="btn btn-sm btn-warning" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="display-1 text-muted mb-3">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h4 class="text-muted">No hay órdenes de trabajo</h4>
+                <p class="text-muted">No se encontraron órdenes que coincidan con los criterios de búsqueda.</p>
+                <a href="@Url.Action("Create")" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Crear Primera Orden
+                </a>
+            </div>
+        }
+    </div>
+</div>

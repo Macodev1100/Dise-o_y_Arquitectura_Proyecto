@@ -1,0 +1,204 @@
+@model IEnumerable<P_F.Models.Entities.Vehiculo>
+
+@{
+    ViewData["Title"] = "Gestión de Vehículos";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-car me-2"></i>Gestión de Vehículos
+    </h1>
+    <a href="@Url.Action("Create")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50 me-1"></i>Registrar Vehículo
+    </a>
+</div>
+
+<!-- Filtros y Búsqueda -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-search me-1"></i>Filtros de Búsqueda
+        </h6>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="searchString" class="form-label">Buscar</label>
+                <input type="text" class="form-control" id="searchString" name="searchString" 
+                       value="@ViewData["CurrentFilter"]" placeholder="Placa, marca, modelo o cliente...">
+            </div>
+            <div class="col-md-4">
+                <label for="clienteId" class="form-label">Cliente</label>
+                <select class="form-control" id="clienteId" name="clienteId">
+                    <option value="">Todos los clientes</option>
+                    @foreach (var cliente in ViewBag.Clientes as List<P_F.Models.Entities.Cliente> ?? new List<P_F.Models.Entities.Cliente>())
+                    {
+                        var isSelected = ViewData["CurrentClienteFilter"]?.ToString() == cliente.ClienteId.ToString();
+                        <option value="@cliente.ClienteId" selected="@isSelected">
+                            @cliente.Nombre @cliente.Apellido
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i>Buscar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabla de Vehículos -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            Lista de Vehículos (@Model.Count())
+        </h6>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>
+                                <a href="@Url.Action("Index", new { sortOrder = ViewData["PlacaSortParm"], currentFilter = ViewData["CurrentFilter"], currentClienteFilter = ViewData["CurrentClienteFilter"] })"
+                                   class="text-decoration-none">
+                                    Placa <i class="fas fa-sort"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("Index", new { sortOrder = ViewData["MarcaSortParm"], currentFilter = ViewData["CurrentFilter"], currentClienteFilter = ViewData["CurrentClienteFilter"] })"
+                                   class="text-decoration-none">
+                                    Marca/Modelo <i class="fas fa-sort"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="@Url.Action("Index", new { sortOrder = ViewData["AnioSortParm"], currentFilter = ViewData["CurrentFilter"], currentClienteFilter = ViewData["CurrentClienteFilter"] })"
+                                   class="text-decoration-none">
+                                    Año <i class="fas fa-sort"></i>
+                                </a>
+                            </th>
+                            <th>Cliente</th>
+                            <th>Combustible</th>
+                            <th>Transmisión</th>
+                            <th>Órdenes</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="@(item.Activo ? "" : "table-secondary")">
+                                <td>
+                                    <strong class="text-primary">@Html.DisplayFor(modelItem => item.Placa)</strong>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Marca) @Html.DisplayFor(modelItem => item.Modelo)
+                                    @if (!string.IsNullOrEmpty(item.Color))
+                                    {
+                                        <small class="text-muted">(@item.Color)</small>
+                                    }
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.Anio)</td>
+                                <td>
+                                    @if (item.Cliente != null)
+                                    {
+                                        <a href="@Url.Action("Details", "Clientes", new { id = item.Cliente.ClienteId })" 
+                                           class="text-decoration-none">
+                                            @item.Cliente.Nombre @item.Cliente.Apellido
+                                        </a>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.TipoCombustible))
+                                    {
+                                        <span class="badge bg-info">@item.TipoCombustible</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Transmision))
+                                    {
+                                        <span class="badge bg-secondary">@item.Transmision</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.OrdenesTrabajo != null && item.OrdenesTrabajo.Any())
+                                    {
+                                        <span class="badge bg-primary">@item.OrdenesTrabajo.Count()</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-dark">0</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Activo)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inactivo</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a href="@Url.Action("Details", new { id = item.VehiculoId })" 
+                                           class="btn btn-sm btn-info" title="Ver Detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", new { id = item.VehiculoId })" 
+                                           class="btn btn-sm btn-warning" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        @if (item.Activo)
+                                        {
+                                            <a href="@Url.Action("Delete", new { id = item.VehiculoId })" 
+                                               class="btn btn-sm btn-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="display-1 text-muted mb-3">
+                    <i class="fas fa-car"></i>
+                </div>
+                <h4 class="text-muted">No se encontraron vehículos</h4>
+                <p class="text-muted">No hay vehículos registrados que coincidan con los criterios de búsqueda.</p>
+                <a href="@Url.Action("Create")" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Registrar Primer Vehículo
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
+                "pageLength": 25,
+                "order": [[ 0, "asc" ]]
+            });
+        });
+    </script>
+}

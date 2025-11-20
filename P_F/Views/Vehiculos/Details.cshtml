@@ -1,0 +1,335 @@
+@model P_F.Models.Entities.Vehiculo
+
+@{
+    ViewData["Title"] = $"Detalles - {Model.Marca} {Model.Modelo}";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-car me-2"></i>Detalles del Vehículo - @Model.Placa
+    </h1>
+    <div>
+        <a href="@Url.Action("Edit", new { id = Model.VehiculoId })" class="btn btn-sm btn-warning shadow-sm me-2">
+            <i class="fas fa-edit fa-sm text-white-50 me-1"></i>Editar
+        </a>
+        <a href="@Url.Action("Index")" class="btn btn-sm btn-secondary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50 me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información Principal -->
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-info-circle me-1"></i>Información del Vehículo
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <strong class="text-muted">Placa:</strong>
+                            <div class="mt-1">
+                                <span class="badge bg-primary fs-6">@Html.DisplayFor(model => model.Placa)</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong class="text-muted">Marca y Modelo:</strong>
+                            <div class="mt-1 h5">
+                                @Html.DisplayFor(model => model.Marca) @Html.DisplayFor(model => model.Modelo)
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong class="text-muted">Año:</strong>
+                            <div class="mt-1">@Html.DisplayFor(model => model.Anio)</div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Color))
+                        {
+                            <div class="mb-3">
+                                <strong class="text-muted">Color:</strong>
+                                <div class="mt-1">@Html.DisplayFor(model => model.Color)</div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-md-6">
+                        @if (!string.IsNullOrEmpty(Model.TipoCombustible))
+                        {
+                            <div class="mb-3">
+                                <strong class="text-muted">Tipo de Combustible:</strong>
+                                <div class="mt-1">
+                                    <span class="badge bg-info">@Html.DisplayFor(model => model.TipoCombustible)</span>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Transmision))
+                        {
+                            <div class="mb-3">
+                                <strong class="text-muted">Transmisión:</strong>
+                                <div class="mt-1">
+                                    <span class="badge bg-secondary">@Html.DisplayFor(model => model.Transmision)</span>
+                                </div>
+                            </div>
+                        }
+
+                        @if (Model.Kilometraje > 0)
+                        {
+                            <div class="mb-3">
+                                <strong class="text-muted">Kilometraje:</strong>
+                                <div class="mt-1">@Html.DisplayFor(model => model.Kilometraje) km</div>
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <strong class="text-muted">Estado:</strong>
+                            <div class="mt-1">
+                                @if (Model.Activo)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Inactivo</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Técnica -->
+                @if (!string.IsNullOrEmpty(Model.NumeroMotor) || !string.IsNullOrEmpty(Model.NumeroChasis))
+                {
+                    <hr class="my-4">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-cogs me-1"></i>Información Técnica
+                    </h6>
+                    <div class="row">
+                        @if (!string.IsNullOrEmpty(Model.NumeroMotor))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <strong class="text-muted">Número de Motor:</strong>
+                                <div class="mt-1 font-monospace">@Html.DisplayFor(model => model.NumeroMotor)</div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.NumeroChasis))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <strong class="text-muted">Número de Chasis:</strong>
+                                <div class="mt-1 font-monospace">@Html.DisplayFor(model => model.NumeroChasis)</div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <hr class="my-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong class="text-muted">Fecha de Registro:</strong>
+                        <div class="mt-1">@Html.DisplayFor(model => model.FechaRegistro)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial de Órdenes -->
+        @if (Model.OrdenesTrabajo != null && Model.OrdenesTrabajo.Any())
+        {
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-history me-1"></i>Historial de Órdenes de Trabajo (@Model.OrdenesTrabajo.Count())
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Mecánico</th>
+                                    <th>Total</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var orden in Model.OrdenesTrabajo.OrderByDescending(o => o.FechaIngreso))
+                                {
+                                    <tr>
+                                        <td><strong>@orden.NumeroOrden</strong></td>
+                                        <td>@orden.FechaIngreso.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            @switch (orden.Estado)
+                                            {
+                                                case EstadoOrden.Pendiente:
+                                                    <span class="badge bg-info">Pendiente</span>
+                                                    break;
+                                                case EstadoOrden.EnProceso:
+                                                    <span class="badge bg-warning">En Proceso</span>
+                                                    break;
+                                                case EstadoOrden.Completada:
+                                                    <span class="badge bg-success">Completada</span>
+                                                    break;
+                                                case EstadoOrden.Entregada:
+                                                    <span class="badge bg-primary">Entregada</span>
+                                                    break;
+                                                case EstadoOrden.Cancelada:
+                                                    <span class="badge bg-danger">Cancelada</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (orden.EmpleadoAsignado != null)
+                                            {
+                                                @orden.EmpleadoAsignado.Nombre @orden.EmpleadoAsignado.Apellido
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Sin asignar</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (orden.Total > 0)
+                                            {
+                                                <strong>$@orden.Total.ToString("N2")</strong>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Pendiente</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("Details", "OrdenesTrabajo", new { id = orden.OrdenTrabajoId })" 
+                                               class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Panel Lateral -->
+    <div class="col-lg-4">
+        <!-- Información del Cliente -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-success">
+                    <i class="fas fa-user me-1"></i>Propietario
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.Cliente != null)
+                {
+                    <div class="text-center mb-3">
+                        <div class="h5 mb-1">@Model.Cliente.Nombre @Model.Cliente.Apellido</div>
+                        <div class="text-muted">@Model.Cliente.DocumentoIdentidad</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <i class="fas fa-phone text-muted me-2"></i>
+                        <span>@Model.Cliente.Telefono</span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Cliente.Email))
+                    {
+                        <div class="mb-2">
+                            <i class="fas fa-envelope text-muted me-2"></i>
+                            <span>@Model.Cliente.Email</span>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Cliente.Direccion))
+                    {
+                        <div class="mb-3">
+                            <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                            <span>@Model.Cliente.Direccion</span>
+                        </div>
+                    }
+
+                    <div class="d-grid">
+                        <a href="@Url.Action("Details", "Clientes", new { id = Model.Cliente.ClienteId })" 
+                           class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-user-circle me-1"></i>Ver Cliente
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">
+                    <i class="fas fa-tools me-1"></i>Acciones Rápidas
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("Create", "OrdenesTrabajo", new { vehiculoId = Model.VehiculoId })" 
+                       class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Nueva Orden de Trabajo
+                    </a>
+                    <a href="@Url.Action("Edit", new { id = Model.VehiculoId })" 
+                       class="btn btn-warning">
+                        <i class="fas fa-edit me-1"></i>Editar Vehículo
+                    </a>
+                    @if (Model.Activo && !(Model.OrdenesTrabajo?.Any() ?? false))
+                    {
+                        <a href="@Url.Action("Delete", new { id = Model.VehiculoId })" 
+                           class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>Eliminar Vehículo
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        @if (Model.OrdenesTrabajo != null && Model.OrdenesTrabajo.Any())
+        {
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">
+                        <i class="fas fa-chart-bar me-1"></i>Estadísticas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="h4 text-primary mb-1">@Model.OrdenesTrabajo.Count()</div>
+                            <div class="small text-muted">Total Órdenes</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="h4 text-success mb-1">
+                                @Model.OrdenesTrabajo.Count(o => o.Estado == EstadoOrden.Entregada)
+                            </div>
+                            <div class="small text-muted">Entregadas</div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <div class="h5 text-warning mb-1">
+                            $@(Model.OrdenesTrabajo.Where(o => o.Total > 0).Sum(o => o.Total).ToString("N2"))
+                        </div>
+                        <div class="small text-muted">Total Facturado</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

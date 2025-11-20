@@ -1,0 +1,250 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Taller Mecánico P&F</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/P_F.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script type="importmap"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-wrench me-2"></i>Taller P&F
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Dashboard">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-users me-1"></i>Clientes
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Clientes" asp-action="Index">Ver Clientes</a></li>
+                                <li><a class="dropdown-item" asp-controller="Clientes" asp-action="Create">Nuevo Cliente</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-car me-1"></i>Vehículos
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Vehiculos" asp-action="Index">Ver Vehículos</a></li>
+                                <li><a class="dropdown-item" asp-controller="Vehiculos" asp-action="Create">Registrar Vehículo</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-clipboard-list me-1"></i>Órdenes
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="OrdenesTrabajo" asp-action="Index">Todas las Órdenes</a></li>
+                                <li><a class="dropdown-item" asp-controller="OrdenesTrabajo" asp-action="Create">Nueva Orden</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="OrdenesTrabajo" asp-action="Index" asp-route-estado="0">Pendientes</a></li>
+                                <li><a class="dropdown-item" asp-controller="OrdenesTrabajo" asp-action="Index" asp-route-estado="1">En Proceso</a></li>
+                                <li><a class="dropdown-item" asp-controller="OrdenesTrabajo" asp-action="Index" asp-route-estado="3">Completadas</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-boxes me-1"></i>Inventario
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Repuestos" asp-action="Index">Ver Inventario</a></li>
+                                <li><a class="dropdown-item" asp-controller="Repuestos" asp-action="Create">Nuevo Repuesto</a></li>
+                                <li><a class="dropdown-item" asp-controller="Repuestos" asp-action="StockBajo">Stock Bajo</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-users-cog me-1"></i>Empleados
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Empleados" asp-action="Index">Ver Empleados</a></li>
+                                <li><a class="dropdown-item" asp-controller="Empleados" asp-action="Create">Nuevo Empleado</a></li>
+                                <li><a class="dropdown-item" asp-controller="Empleados" asp-action="Productividad">Productividad</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-file-invoice-dollar me-1"></i>Facturación
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Facturas" asp-action="Index">Ver Facturas</a></li>
+                                <li><a class="dropdown-item" asp-controller="Facturas" asp-action="Create">Nueva Factura</a></li>
+                                <li><a class="dropdown-item" asp-controller="Facturas" asp-action="Reporte">Reporte de Ventas</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-chart-bar me-1"></i>Reportes
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Reportes")">
+                                    <i class="fas fa-home me-1"></i>Centro de Reportes
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="@Url.Action("VentasPorPeriodo", "Reportes")">
+                                    <i class="fas fa-dollar-sign me-1"></i>Ventas por Período
+                                </a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("InventarioCritico", "Reportes")">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>Stock Crítico
+                                </a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ProductividadEmpleados", "Reportes")">
+                                    <i class="fas fa-users-cog me-1"></i>Productividad Empleados
+                                </a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ClientesFrecuentes", "Reportes")">
+                                    <i class="fas fa-users me-1"></i>Clientes Frecuentes
+                                </a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("OrdenesPorEstado", "Reportes")">
+                                    <i class="fas fa-clipboard-list me-1"></i>Órdenes por Estado
+                                </a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-users-cog me-1"></i>Administración
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Usuarios" asp-action="Index">
+                                    <i class="fas fa-users me-1"></i>Gestión de Usuarios
+                                </a></li>
+                                <li><a class="dropdown-item" asp-controller="Usuarios" asp-action="InicializarSistema">
+                                    <i class="fas fa-cog me-1"></i>Inicializar Sistema
+                                </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Notificaciones Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        @if (TempData["Success"] != null)
+        {
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted bg-light mt-5">
+        <div class="container text-center py-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <h6><i class="fas fa-wrench me-2"></i>Taller Mecánico P&F</h6>
+                    <small>Sistema Integral de Gestión</small>
+                </div>
+                <div class="col-md-4">
+                    <small>📞 555-0123 | 📧 info@tallerpyf.com</small>
+                </div>
+                <div class="col-md-4">
+                    <small>&copy; 2025 - Todos los derechos reservados</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- SignalR para notificaciones en tiempo real -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    
+    <script>
+        // Configuración de notificaciones en tiempo real
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .build();
+
+        connection.start().then(function () {
+            console.log("Conectado al hub de notificaciones");
+        }).catch(function (err) {
+            console.error("Error al conectar:", err.toString());
+        });
+
+        connection.on("ReceiveNotification", function (message, type) {
+            showToast(message, type);
+        });
+
+        // Función para mostrar notificaciones toast
+        function showToast(message, type = 'info') {
+            const toastHtml = `
+                <div class="toast align-items-center text-bg-${type} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-info-circle me-2"></i>${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            const toastContainer = document.querySelector('.toast-container');
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            
+            const newToast = toastContainer.lastElementChild;
+            const toast = new bootstrap.Toast(newToast);
+            toast.show();
+
+            // Remover el toast del DOM después de que se oculte
+            newToast.addEventListener('hidden.bs.toast', function () {
+                newToast.remove();
+            });
+        }
+
+        // Auto-ocultar toasts después de 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var toastElList = [].slice.call(document.querySelectorAll('.toast.show'));
+                var toastList = toastElList.map(function(toastEl) {
+                    return new bootstrap.Toast(toastEl);
+                });
+                toastList.forEach(toast => toast.hide());
+            }, 5000);
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

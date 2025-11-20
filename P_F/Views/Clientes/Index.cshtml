@@ -1,0 +1,281 @@
+@model IEnumerable<P_F.Models.Entities.Cliente>
+
+@{
+    ViewData["Title"] = "Gestión de Clientes";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-users me-2"></i>Gestión de Clientes
+    </h1>
+    <a asp-action="Create" class="btn btn-primary btn-sm shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50 me-1"></i>
+        Nuevo Cliente
+    </a>
+</div>
+
+<!-- Búsqueda -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-search me-2"></i>Búsqueda de Clientes
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre, documento o teléfono...">
+                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="button" class="btn btn-outline-primary" onclick="limpiarBusqueda()">
+                    <i class="fas fa-eraser me-1"></i>Limpiar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Clientes -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-table me-2"></i>Lista de Clientes
+            <span class="badge bg-info ms-2">@Model.Count() registros</span>
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="clientesTable" width="100%" cellspacing="0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Documento</th>
+                        <th>Nombre Completo</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Vehículos</th>
+                        <th>Fecha Registro</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cliente in Model)
+                    {
+                        <tr data-search="@($"{cliente.Nombre} {cliente.Apellido} {cliente.DocumentoIdentidad} {cliente.Telefono}".ToLower())">
+                            <td>
+                                <strong>@cliente.DocumentoIdentidad</strong>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-sm me-2">
+                                        <i class="fas fa-user-circle fa-2x text-secondary"></i>
+                                    </div>
+                                    <div>
+                                        <strong>@cliente.Nombre @cliente.Apellido</strong>
+                                        @if (!string.IsNullOrEmpty(cliente.Direccion))
+                                        {
+                                            <br><small class="text-muted">@cliente.Direccion</small>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="tel:@cliente.Telefono" class="text-decoration-none">
+                                    <i class="fas fa-phone me-1"></i>@cliente.Telefono
+                                </a>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(cliente.Email))
+                                {
+                                    <a href="mailto:@cliente.Email" class="text-decoration-none">
+                                        <i class="fas fa-envelope me-1"></i>@cliente.Email
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Sin email</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    @cliente.Vehiculos.Count() vehículo(s)
+                                </span>
+                                @if (cliente.Vehiculos.Any())
+                                {
+                                    <br>
+                                    <small class="text-muted">
+                                        @string.Join(", ", cliente.Vehiculos.Take(2).Select(v => v.Placa))
+                                        @if (cliente.Vehiculos.Count() > 2)
+                                        {
+                                            <text>...</text>
+                                        }
+                                    </small>
+                                }
+                            </td>
+                            <td>
+                                @cliente.FechaRegistro.ToString("dd/MM/yyyy")
+                                <br><small class="text-muted">@cliente.FechaRegistro.ToString("HH:mm")</small>
+                            </td>
+                            <td>
+                                @if (cliente.Activo)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Inactivo</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@cliente.ClienteId" 
+                                       class="btn btn-info btn-sm" title="Ver Detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@cliente.ClienteId" 
+                                       class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-success btn-sm" 
+                                            onclick="nuevaOrden(@cliente.ClienteId)" title="Nueva Orden">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" 
+                                            onclick="confirmarEliminar(@cliente.ClienteId, '@cliente.Nombre @cliente.Apellido')" 
+                                            title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No hay clientes registrados</h4>
+                <p class="text-muted">Comienza agregando tu primer cliente</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Agregar Primer Cliente
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea eliminar al cliente <strong id="clienteNombre"></strong>?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Esta acción marcará al cliente como inactivo pero no eliminará su historial.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Eliminar Cliente
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', function() {
+            filtrarTabla();
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            filtrarTabla();
+        });
+
+        function filtrarTabla() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#clientesTable tbody tr');
+            
+            rows.forEach(row => {
+                const searchData = row.getAttribute('data-search');
+                if (searchData.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function limpiarBusqueda() {
+            document.getElementById('searchInput').value = '';
+            filtrarTabla();
+        }
+
+        function confirmarEliminar(clienteId, nombreCliente) {
+            document.getElementById('clienteNombre').textContent = nombreCliente;
+            document.getElementById('deleteForm').action = '@Url.Action("Delete")/' + clienteId;
+            
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+
+        function nuevaOrden(clienteId) {
+            window.location.href = '@Url.Action("Create", "OrdenesTrabajo")?clienteId=' + clienteId;
+        }
+
+        // Inicializar tooltips
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Resaltar fila al hacer hover
+        $('#clientesTable tbody tr').hover(
+            function() { $(this).addClass('table-active'); },
+            function() { $(this).removeClass('table-active'); }
+        );
+    </script>
+
+    <style>
+        .avatar {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(0,123,255,.075) !important;
+        }
+        
+        .btn-group .btn {
+            margin-right: 2px;
+        }
+        
+        .badge {
+            font-size: 0.75em;
+        }
+    </style>
+}

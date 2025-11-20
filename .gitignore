@@ -1,0 +1,45 @@
+# Archivos de construcción
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.pdb
+*.exe
+
+# Archivos de Visual Studio
+.vs/
+*.sln.docstates
+
+# Archivos de configuración local
+appsettings.Development.json
+launchSettings.json
+
+# Logs
+logs/
+*.log
+
+# Base de datos
+*.db
+*.sqlite
+*.mdf
+*.ldf
+
+# Paquetes NuGet
+packages/
+*.nupkg
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Node modules (si se usan)
+node_modules/
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
+
+# Archivos de backup
+*.bak

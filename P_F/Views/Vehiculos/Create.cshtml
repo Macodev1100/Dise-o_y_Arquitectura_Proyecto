@@ -1,0 +1,237 @@
+@model P_F.Models.Entities.Vehiculo
+
+@{
+    ViewData["Title"] = "Registrar Vehículo";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-car me-2"></i>Registrar Vehículo
+    </h1>
+    <a href="@Url.Action("Index")" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+        <i class="fas fa-arrow-left fa-sm text-white-50 me-1"></i>Volver a Lista
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-plus me-1"></i>Información del Vehículo
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+                    <!-- Cliente -->
+                    <div class="mb-3">
+                        <label asp-for="ClienteId" class="form-label">
+                            Cliente <span class="text-danger">*</span>
+                        </label>
+                        <select asp-for="ClienteId" class="form-control" required>
+                            <option value="">Seleccionar cliente...</option>
+                            @foreach (var cliente in ViewBag.Clientes as List<P_F.Models.Entities.Cliente> ?? new List<P_F.Models.Entities.Cliente>())
+                            {
+                                <option value="@cliente.ClienteId">@cliente.Nombre @cliente.Apellido</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ClienteId" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <!-- Placa -->
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Placa" class="form-label">
+                                Placa <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Placa" class="form-control text-uppercase" placeholder="ABC123" required />
+                            <span asp-validation-for="Placa" class="text-danger"></span>
+                        </div>
+
+                        <!-- Marca -->
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Marca" class="form-label">
+                                Marca <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Marca" class="form-control" placeholder="Toyota, Honda, Chevrolet..." required />
+                            <span asp-validation-for="Marca" class="text-danger"></span>
+                        </div>
+
+                        <!-- Modelo -->
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Modelo" class="form-label">
+                                Modelo <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Modelo" class="form-control" placeholder="Corolla, Civic, Spark..." required />
+                            <span asp-validation-for="Modelo" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Año -->
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Anio" class="form-label">
+                                Año <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Anio" type="number" class="form-control" min="1990" max="@DateTime.Now.Year" required />
+                            <span asp-validation-for="Anio" class="text-danger"></span>
+                        </div>
+
+                        <!-- Color -->
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Color" class="form-label">Color</label>
+                            <input asp-for="Color" class="form-control" placeholder="Blanco, Azul, Rojo..." />
+                            <span asp-validation-for="Color" class="text-danger"></span>
+                        </div>
+
+                        <!-- Tipo Combustible -->
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="TipoCombustible" class="form-label">Combustible</label>
+                            <select asp-for="TipoCombustible" class="form-control">
+                                <option value="">Seleccionar...</option>
+                                <option value="Gasolina">Gasolina</option>
+                                <option value="Diésel">Diésel</option>
+                                <option value="Híbrido">Híbrido</option>
+                                <option value="Eléctrico">Eléctrico</option>
+                                <option value="GLP">GLP</option>
+                                <option value="GNV">GNV</option>
+                            </select>
+                            <span asp-validation-for="TipoCombustible" class="text-danger"></span>
+                        </div>
+
+                        <!-- Transmisión -->
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Transmision" class="form-label">Transmisión</label>
+                            <select asp-for="Transmision" class="form-control">
+                                <option value="">Seleccionar...</option>
+                                <option value="Manual">Manual</option>
+                                <option value="Automática">Automática</option>
+                                <option value="Semi-automática">Semi-automática</option>
+                                <option value="CVT">CVT</option>
+                            </select>
+                            <span asp-validation-for="Transmision" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Número Motor -->
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="NumeroMotor" class="form-label">Número de Motor</label>
+                            <input asp-for="NumeroMotor" class="form-control" placeholder="Número de motor del vehículo" />
+                            <span asp-validation-for="NumeroMotor" class="text-danger"></span>
+                        </div>
+
+                        <!-- Número Chasis -->
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="NumeroChasis" class="form-label">Número de Chasis</label>
+                            <input asp-for="NumeroChasis" class="form-control" placeholder="Número de chasis del vehículo" />
+                            <span asp-validation-for="NumeroChasis" class="text-danger"></span>
+                        </div>
+
+                        <!-- Kilometraje -->
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Kilometraje" class="form-label">Kilometraje</label>
+                            <input asp-for="Kilometraje" type="number" class="form-control" min="0" placeholder="Kilometraje actual" />
+                            <span asp-validation-for="Kilometraje" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input asp-for="Activo" class="form-check-input" type="checkbox" checked />
+                            <label asp-for="Activo" class="form-check-label">
+                                Vehículo activo
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="@Url.Action("Index")" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Registrar Vehículo
+                        </button>
+                    </div>
+
+                    <input asp-for="FechaRegistro" type="hidden" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de Ayuda -->
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">
+                    <i class="fas fa-info-circle me-1"></i>Ayuda
+                </h6>
+            </div>
+            <div class="card-body">
+                <h6><i class="fas fa-lightbulb text-warning me-1"></i>Consejos:</h6>
+                <ul class="small">
+                    <li><strong>Placa:</strong> Debe ser única en el sistema</li>
+                    <li><strong>Cliente:</strong> Si no aparece en la lista, regístrelo primero</li>
+                    <li><strong>Año:</strong> Entre 1990 y @DateTime.Now.Year</li>
+                    <li><strong>Números de motor y chasis:</strong> Opcionales pero recomendados</li>
+                </ul>
+
+                <h6 class="mt-3"><i class="fas fa-star text-warning me-1"></i>Campos obligatorios:</h6>
+                <ul class="small">
+                    <li>Cliente</li>
+                    <li>Placa</li>
+                    <li>Marca</li>
+                    <li>Modelo</li>
+                    <li>Año</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Convertir placa a mayúsculas automáticamente
+            $('#Placa').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+
+            // Validaciones adicionales
+            $('form').on('submit', function(e) {
+                let isValid = true;
+
+                // Validar placa
+                let placa = $('#Placa').val().trim();
+                if (placa.length < 6) {
+                    alert('La placa debe tener al menos 6 caracteres');
+                    isValid = false;
+                }
+
+                // Validar año
+                let anio = parseInt($('#Anio').val());
+                let currentYear = new Date().getFullYear();
+                if (anio < 1990 || anio > currentYear) {
+                    alert(`El año debe estar entre 1990 y ${currentYear}`);
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+
+            // Si viene clienteId por parámetro, seleccionarlo
+            @if (ViewBag.ClienteId != null)
+            {
+                <text>$('#ClienteId').val('@ViewBag.ClienteId');</text>
+            }
+        });
+    </script>
+}

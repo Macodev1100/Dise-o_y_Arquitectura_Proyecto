@@ -1,0 +1,167 @@
+@model IEnumerable<P_F.Models.VentaDiaria>
+
+@{
+    ViewData["Title"] = "Resultados - Ventas por Período";
+    var fechaInicio = ViewBag.FechaInicio as DateTime?;
+    var fechaFin = ViewBag.FechaFin as DateTime?;
+    var totalPeriodo = ViewBag.TotalPeriodo as decimal? ?? 0;
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-chart-line me-2"></i>Reporte de Ventas
+    </h1>
+    <div>
+        @if (fechaInicio.HasValue && fechaFin.HasValue)
+        {
+            <form method="post" action="@Url.Action("VentasPdf", "Reportes")" class="d-inline">
+                <input type="hidden" name="fechaInicio" value="@fechaInicio.Value.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="fechaFin" value="@fechaFin.Value.ToString("yyyy-MM-dd")" />
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-file-pdf me-1"></i>Descargar PDF
+                </button>
+            </form>
+        }
+        <a href="@Url.Action("VentasPorPeriodo", "Reportes")" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Nueva Consulta
+        </a>
+    </div>
+</div>
+
+@if (fechaInicio.HasValue && fechaFin.HasValue)
+{
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Período</div>
+                            <div class="h6 mb-0 font-weight-bold text-gray-800">
+                                @fechaInicio.Value.ToString("dd/MM/yyyy") - @fechaFin.Value.ToString("dd/MM/yyyy")
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Ventas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">$@totalPeriodo.ToString("N2")</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Cantidad Facturas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-invoice fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Promedio Diario</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                $@(Model.Any() ? (totalPeriodo / Model.Count()).ToString("N2") : "0.00")
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.Any())
+{
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Ventas Detalladas por Día</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Total Ventas</th>
+                            <th>Porcentaje del Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var venta in Model.OrderBy(v => v.Fecha))
+                        {
+                            var porcentaje = totalPeriodo > 0 ? (venta.Total / totalPeriodo) * 100 : 0;
+                            <tr>
+                                <td>@venta.Fecha.ToString("dddd, dd/MM/yyyy")</td>
+                                <td>$@venta.Total.ToString("N2")</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: @porcentaje.ToString("F1")%" 
+                                             aria-valuenow="@porcentaje" aria-valuemin="0" aria-valuemax="100">
+                                            @porcentaje.ToString("F1")%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-active">
+                            <th>TOTAL</th>
+                            <th>$@totalPeriodo.ToString("N2")</th>
+                            <th>100%</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card shadow mb-4">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No se encontraron ventas</h5>
+            <p class="text-muted">No hay ventas registradas en el período seleccionado.</p>
+            <a href="@Url.Action("VentasPorPeriodo", "Reportes")" class="btn btn-primary">
+                <i class="fas fa-search me-1"></i>Buscar en Otro Período
+            </a>
+        </div>
+    </div>
+}

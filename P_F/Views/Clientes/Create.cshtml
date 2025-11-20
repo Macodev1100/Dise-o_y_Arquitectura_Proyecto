@@ -1,0 +1,300 @@
+@model P_F.Models.Entities.Cliente
+
+@{
+    ViewData["Title"] = Model.ClienteId == 0 ? "Nuevo Cliente" : "Editar Cliente";
+    var isEdit = Model.ClienteId != 0;
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-@(isEdit ? "edit" : "plus") me-2"></i>@ViewData["Title"]
+    </h1>
+    <a asp-action="Index" class="btn btn-secondary btn-sm shadow-sm">
+        <i class="fas fa-arrow-left fa-sm text-white-50 me-1"></i>
+        Volver a Lista
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-user me-2"></i>Información del Cliente
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="clienteForm">
+                    @if (isEdit)
+                    {
+                        @Html.HiddenFor(model => model.ClienteId)
+                        @Html.HiddenFor(model => model.FechaRegistro)
+                        @Html.HiddenFor(model => model.Activo)
+                    }
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Nombre" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Nombre *
+                                </label>
+                                <input asp-for="Nombre" class="form-control form-control-lg" placeholder="Ingrese el nombre" required>
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Apellido" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Apellido *
+                                </label>
+                                <input asp-for="Apellido" class="form-control form-control-lg" placeholder="Ingrese el apellido" required>
+                                <span asp-validation-for="Apellido" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="DocumentoIdentidad" class="form-label">
+                                    <i class="fas fa-id-card me-1"></i>Documento de Identidad
+                                </label>
+                                <input asp-for="DocumentoIdentidad" class="form-control form-control-lg" placeholder="Cédula/RUC/Pasaporte">
+                                <span asp-validation-for="DocumentoIdentidad" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Telefono" class="form-label">
+                                    <i class="fas fa-phone me-1"></i>Teléfono *
+                                </label>
+                                <input asp-for="Telefono" class="form-control form-control-lg" placeholder="Número de teléfono" required>
+                                <span asp-validation-for="Telefono" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="form-label">
+                            <i class="fas fa-envelope me-1"></i>Correo Electrónico
+                        </label>
+                        <input asp-for="Email" type="email" class="form-control form-control-lg" placeholder="correo@ejemplo.com">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Se usará para enviar notificaciones y recordatorios
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Direccion" class="form-label">
+                            <i class="fas fa-map-marker-alt me-1"></i>Dirección
+                        </label>
+                        <textarea asp-for="Direccion" class="form-control" rows="3" placeholder="Dirección completa del cliente"></textarea>
+                        <span asp-validation-for="Direccion" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group text-end">
+                        <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()">
+                            <i class="fas fa-times me-1"></i>Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                            <i class="fas fa-save me-1"></i>
+                            @(isEdit ? "Actualizar Cliente" : "Guardar Cliente")
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Panel de ayuda -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">
+                    <i class="fas fa-info-circle me-2"></i>Información de Ayuda
+                </h6>
+            </div>
+            <div class="card-body">
+                <h6><i class="fas fa-lightbulb me-1"></i>Consejos:</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Los campos marcados con * son obligatorios
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        El teléfono es importante para contactar al cliente
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        El email permite enviar notificaciones automáticas
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        La dirección ayuda en el servicio a domicilio
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        @if (isEdit && Model.Vehiculos.Any())
+        {
+            <!-- Vehículos del cliente -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-car me-2"></i>Vehículos Registrados
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var vehiculo in Model.Vehiculos.Take(5))
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>@vehiculo.Placa</strong><br>
+                                <small class="text-muted">@vehiculo.Marca @vehiculo.Modelo @vehiculo.Anio</small>
+                            </div>
+                            <a asp-controller="Vehiculos" asp-action="Details" asp-route-id="@vehiculo.VehiculoId" 
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                        <hr>
+                    }
+                    
+                    @if (Model.Vehiculos.Count() > 5)
+                    {
+                        <p class="text-muted text-center">
+                            Y @(Model.Vehiculos.Count() - 5) vehículo(s) más...
+                        </p>
+                    }
+                    
+                    <div class="text-center">
+                        <a asp-controller="Vehiculos" asp-action="Create" asp-route-clienteId="@Model.ClienteId" 
+                           class="btn btn-success btn-sm">
+                            <i class="fas fa-plus me-1"></i>Agregar Vehículo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Validación del formulario
+            $("#clienteForm").validate({
+                rules: {
+                    Nombre: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 100
+                    },
+                    Apellido: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 100
+                    },
+                    Telefono: {
+                        required: true,
+                        minlength: 7,
+                        maxlength: 20
+                    },
+                    Email: {
+                        email: true,
+                        maxlength: 100
+                    },
+                    DocumentoIdentidad: {
+                        maxlength: 20
+                    },
+                    Direccion: {
+                        maxlength: 200
+                    }
+                },
+                messages: {
+                    Nombre: {
+                        required: "El nombre es obligatorio",
+                        minlength: "Debe tener al menos 2 caracteres",
+                        maxlength: "No debe exceder 100 caracteres"
+                    },
+                    Apellido: {
+                        required: "El apellido es obligatorio",
+                        minlength: "Debe tener al menos 2 caracteres",
+                        maxlength: "No debe exceder 100 caracteres"
+                    },
+                    Telefono: {
+                        required: "El teléfono es obligatorio",
+                        minlength: "Debe tener al menos 7 dígitos",
+                        maxlength: "No debe exceder 20 caracteres"
+                    },
+                    Email: {
+                        email: "Ingrese un email válido",
+                        maxlength: "No debe exceder 100 caracteres"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('text-danger');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            // Loading state en el botón
+            $("#clienteForm").on('submit', function() {
+                $("#submitBtn").prop('disabled', true)
+                    .html('<i class="fas fa-spinner fa-spin me-1"></i>Guardando...');
+            });
+
+            // Auto-format del teléfono
+            $("#Telefono").on('input', function() {
+                let value = $(this).val().replace(/\D/g, '');
+                $(this).val(value);
+            });
+
+            // Convertir texto a mayúsculas para nombres
+            $("#Nombre, #Apellido").on('input', function() {
+                let value = $(this).val();
+                $(this).val(value.charAt(0).toUpperCase() + value.slice(1).toLowerCase());
+            });
+        });
+    </script>
+    
+    <style>
+        .form-control-lg {
+            font-size: 1.1rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        
+        .card {
+            border: none;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+        }
+    </style>
+}

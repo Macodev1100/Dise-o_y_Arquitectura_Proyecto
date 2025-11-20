@@ -1,0 +1,214 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Gestión de Usuarios";
+}
+
+<div class="container-fluid">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="text-primary">
+                    <i class="fas fa-users me-2"></i>Gestión de Usuarios
+                </h2>
+                <div>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearUsuarioModal">
+                        <i class="fas fa-plus"></i> Crear Usuario
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="inicializarSistema()">
+                        <i class="fas fa-cog"></i> Inicializar Sistema
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Tabla de Usuarios -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Email</th>
+                            <th>Usuario</th>
+                            <th>Roles</th>
+                            <th>Confirmado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var usuario in Model)
+                        {
+                            <tr>
+                                <td>@usuario.Email</td>
+                                <td>@usuario.UserName</td>
+                                <td>
+                                    <span class="badge bg-primary">@usuario.Roles</span>
+                                </td>
+                                <td>
+                                    @if (usuario.EmailConfirmed)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check"></i> Confirmado
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-clock"></i> Pendiente
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="editarUsuario('@usuario.Id', '@usuario.Email', '@usuario.Roles')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="eliminarUsuario('@usuario.Id', '@usuario.Email')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear Usuario -->
+<div class="modal fade" id="crearUsuarioModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus me-2"></i>Crear Nuevo Usuario
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="@Url.Action("CrearUsuario")">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <label for="rol" class="form-label">Rol</label>
+                        <select class="form-select" id="rol" name="rol">
+                            <option value="">Seleccionar rol...</option>
+                            @foreach (var role in ViewBag.Roles)
+                            {
+                                <option value="@role.Name">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Crear Usuario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Usuario -->
+<div class="modal fade" id="editarUsuarioModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>Editar Usuario
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editarUsuarioForm" method="post" action="@Url.Action("AsignarRol")">
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId" name="userId">
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editRol" class="form-label">Rol</label>
+                        <select class="form-select" id="editRol" name="rol">
+                            @foreach (var role in ViewBag.Roles)
+                            {
+                                <option value="@role.Name">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function editarUsuario(id, email, roles) {
+    document.getElementById('editUserId').value = id;
+    document.getElementById('editEmail').value = email;
+    
+    // Seleccionar el primer rol (simplificado)
+    const primerRol = roles.split(',')[0].trim();
+    document.getElementById('editRol').value = primerRol;
+    
+    new bootstrap.Modal(document.getElementById('editarUsuarioModal')).show();
+}
+
+function eliminarUsuario(id, email) {
+    if (confirm(`¿Está seguro de eliminar al usuario ${email}?`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '@Url.Action("EliminarUsuario")';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'userId';
+        input.value = id;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function inicializarSistema() {
+    if (confirm('¿Está seguro de inicializar el sistema? Esto creará los roles y el usuario administrador por defecto.')) {
+        window.location.href = '@Url.Action("InicializarSistema")';
+    }
+}
+</script>

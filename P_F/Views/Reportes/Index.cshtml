@@ -1,0 +1,307 @@
+@{
+    ViewData["Title"] = "Sistema de Reportes";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-chart-bar me-2"></i>Sistema de Reportes
+    </h1>
+</div>
+
+<div class="row">
+    <!-- Reportes de Ventas -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-dollar-sign me-1"></i>Reportes de Ventas
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("VentasPorPeriodo")" class="btn btn-outline-primary">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Ventas por Período
+                    </a>
+                    <a href="#" class="btn btn-outline-success" onclick="reporteVentasMes()">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Ventas del Mes Actual
+                    </a>
+                    <a href="#" class="btn btn-outline-info" onclick="reporteVentasAnual()">
+                        <i class="fas fa-chart-area me-2"></i>
+                        Resumen Anual
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reportes de Inventario -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">
+                    <i class="fas fa-boxes me-1"></i>Reportes de Inventario
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("InventarioCritico")" class="btn btn-outline-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Stock Crítico
+                    </a>
+                    <a href="#" class="btn btn-outline-warning" onclick="reporteMovimientos()">
+                        <i class="fas fa-exchange-alt me-2"></i>
+                        Movimientos de Inventario
+                    </a>
+                    <a href="#" class="btn btn-outline-info" onclick="reporteRepuestosMasUsados()">
+                        <i class="fas fa-star me-2"></i>
+                        Repuestos Más Utilizados
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reportes de Empleados -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-secondary">
+                    <i class="fas fa-users-cog me-1"></i>Reportes de Personal
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("ProductividadEmpleados")" class="btn btn-outline-secondary">
+                        <i class="fas fa-user-check me-2"></i>
+                        Productividad de Empleados
+                    </a>
+                    <a href="#" class="btn btn-outline-primary" onclick="reporteHorasTrabajo()">
+                        <i class="fas fa-clock me-2"></i>
+                        Horas de Trabajo
+                    </a>
+                    <a href="#" class="btn btn-outline-success" onclick="reporteRendimiento()">
+                        <i class="fas fa-trophy me-2"></i>
+                        Rendimiento por Técnico
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reportes de Órdenes -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">
+                    <i class="fas fa-clipboard-list me-1"></i>Reportes de Órdenes
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("OrdenesPorEstado")" class="btn btn-outline-info">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Órdenes por Estado
+                    </a>
+                    <a href="#" class="btn btn-outline-warning" onclick="reporteTiempoPromedio()">
+                        <i class="fas fa-stopwatch me-2"></i>
+                        Tiempo Promedio de Reparación
+                    </a>
+                    <a href="#" class="btn btn-outline-danger" onclick="reporteOrdenesVencidas()">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Órdenes Vencidas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reportes de Clientes -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-success">
+                    <i class="fas fa-users me-1"></i>Reportes de Clientes
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("ClientesFrecuentes")" class="btn btn-outline-success">
+                        <i class="fas fa-heart me-2"></i>
+                        Clientes Frecuentes
+                    </a>
+                    <a href="#" class="btn btn-outline-info" onclick="reporteNuevosClientes()">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Nuevos Clientes
+                    </a>
+                    <a href="#" class="btn btn-outline-primary" onclick="reporteSatisfaccion()">
+                        <i class="fas fa-smile me-2"></i>
+                        Satisfacción del Cliente
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reportes Financieros -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-danger">
+                    <i class="fas fa-file-invoice-dollar me-1"></i>Reportes Financieros
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-danger" onclick="reporteFacturacion()">
+                        <i class="fas fa-file-alt me-2"></i>
+                        Facturación Mensual
+                    </a>
+                    <a href="#" class="btn btn-outline-success" onclick="reporteCuentasPorCobrar()">
+                        <i class="fas fa-money-bill-wave me-2"></i>
+                        Cuentas por Cobrar
+                    </a>
+                    <a href="#" class="btn btn-outline-info" onclick="reporteFlujoCaja()">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Flujo de Caja
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para filtros de fecha -->
+<div class="modal fade" id="filtroFechaModal" tabindex="-1" aria-labelledby="filtroFechaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filtroFechaModalLabel">Seleccionar Período</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="filtroFechaForm">
+                    <div class="mb-3">
+                        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaFin" class="form-label">Fecha Fin</label>
+                        <input type="date" class="form-control" id="fechaFin" name="fechaFin" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="ejecutarReporte()">Generar Reporte</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let accionReporte = '';
+
+        function reporteVentasMes() {
+            const ahora = new Date();
+            const primerDia = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+            const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
+            
+            window.location.href = '@Url.Action("VentasPorPeriodo")?' +
+                'fechaInicio=' + primerDia.toISOString().split('T')[0] +
+                '&fechaFin=' + ultimoDia.toISOString().split('T')[0];
+        }
+
+        function reporteVentasAnual() {
+            const ahora = new Date();
+            const primerDia = new Date(ahora.getFullYear(), 0, 1);
+            const ultimoDia = new Date(ahora.getFullYear(), 11, 31);
+            
+            window.location.href = '@Url.Action("VentasPorPeriodo")?' +
+                'fechaInicio=' + primerDia.toISOString().split('T')[0] +
+                '&fechaFin=' + ultimoDia.toISOString().split('T')[0];
+        }
+
+        function reporteMovimientos() {
+            mostrarFiltroFecha('movimientos');
+        }
+
+        function reporteRepuestosMasUsados() {
+            mostrarFiltroFecha('repuestosMasUsados');
+        }
+
+        function reporteHorasTrabajo() {
+            mostrarFiltroFecha('horasTrabajo');
+        }
+
+        function reporteRendimiento() {
+            mostrarFiltroFecha('rendimiento');
+        }
+
+        function reporteTiempoPromedio() {
+            mostrarFiltroFecha('tiempoPromedio');
+        }
+
+        function reporteOrdenesVencidas() {
+            // Este reporte no necesita filtro de fecha
+            alert('Funcionalidad en desarrollo');
+        }
+
+        function reporteNuevosClientes() {
+            mostrarFiltroFecha('nuevosClientes');
+        }
+
+        function reporteSatisfaccion() {
+            mostrarFiltroFecha('satisfaccion');
+        }
+
+        function reporteFacturacion() {
+            mostrarFiltroFecha('facturacion');
+        }
+
+        function reporteCuentasPorCobrar() {
+            // Este reporte no necesita filtro de fecha
+            alert('Funcionalidad en desarrollo');
+        }
+
+        function reporteFlujoCaja() {
+            mostrarFiltroFecha('flujoCaja');
+        }
+
+        function mostrarFiltroFecha(accion) {
+            accionReporte = accion;
+            
+            // Establecer fechas por defecto (último mes)
+            const ahora = new Date();
+            const hace30Dias = new Date();
+            hace30Dias.setDate(ahora.getDate() - 30);
+            
+            document.getElementById('fechaInicio').value = hace30Dias.toISOString().split('T')[0];
+            document.getElementById('fechaFin').value = ahora.toISOString().split('T')[0];
+            
+            new bootstrap.Modal(document.getElementById('filtroFechaModal')).show();
+        }
+
+        function ejecutarReporte() {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            
+            if (!fechaInicio || !fechaFin) {
+                alert('Por favor seleccione ambas fechas');
+                return;
+            }
+            
+            if (new Date(fechaInicio) > new Date(fechaFin)) {
+                alert('La fecha de inicio no puede ser mayor que la fecha fin');
+                return;
+            }
+            
+            // Por ahora mostrar mensaje de desarrollo
+            alert(`Reporte de ${accionReporte} del ${fechaInicio} al ${fechaFin} - Funcionalidad en desarrollo`);
+            
+            bootstrap.Modal.getInstance(document.getElementById('filtroFechaModal')).hide();
+        }
+    </script>
+}

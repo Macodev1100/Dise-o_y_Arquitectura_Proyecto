@@ -1,0 +1,370 @@
+@model P_F.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard - Taller Mecánico";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-tachometer-alt me-2"></i>Dashboard Principal
+    </h1>
+    <div>
+        <span class="text-muted">Última actualización: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+    </div>
+</div>
+
+<!-- Tarjetas de Métricas Principales -->
+<div class="row">
+    <!-- Total Clientes -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Clientes</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalClientes</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Órdenes Pendientes -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Órdenes Pendientes</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.OrdenesPendientes</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ventas del Mes -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Ventas del Mes</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$@Model.VentasDelMes.ToString("N2")</div>
+                        @if (Model.CrecimientoVentas != 0)
+                        {
+                            <div class="small text-@(Model.CrecimientoVentas > 0 ? "success" : "danger")">
+                                <i class="fas fa-arrow-@(Model.CrecimientoVentas > 0 ? "up" : "down")"></i> @Model.CrecimientoVentas.ToString("N1")%
+                            </div>
+                        }
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Crítico -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            Repuestos Críticos</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.RepuestosBajoStock</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Segunda Fila de Métricas -->
+<div class="row">
+    <!-- Órdenes Hoy -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Órdenes Hoy</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@Model.OrdenesHoy</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- En Proceso -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">En Proceso</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.OrdenesEnProceso</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-tools fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Vehículos -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-secondary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Total Vehículos</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalVehiculos</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-car fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Empleados -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-dark shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">Total Empleados</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalEmpleados</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users-cog fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos y Estadísticas -->
+<div class="row">
+    <!-- Gráfico de Ventas -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Ventas Últimos 7 Días</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="ventasChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productividad de Empleados -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Productividad Empleados</h6>
+            </div>
+            <div class="card-body">
+                @if (Model.EstadisticasEmpleados.Any())
+                {
+                    @foreach (var empleado in Model.EstadisticasEmpleados)
+                    {
+                        <div class="mb-3">
+                            <div class="small mb-1">
+                                <strong>@empleado.Nombre</strong>
+                                <span class="float-end">@empleado.OrdenesCompletadas completadas</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     style="width: @(empleado.OrdenesCompletadas * 10)%" 
+                                     aria-valuenow="@empleado.OrdenesCompletadas" 
+                                     aria-valuemin="0" aria-valuemax="10"></div>
+                            </div>
+                            <div class="small text-muted">
+                                Órdenes activas: @empleado.OrdenesActivas
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted text-center">No hay estadísticas de empleados disponibles.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos Rápidos y Alertas -->
+<div class="row">
+    <!-- Accesos Rápidos -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-rocket me-1"></i>Accesos Rápidos
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("Create", "OrdenesTrabajo")" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Nueva Orden de Trabajo
+                    </a>
+                    <a href="@Url.Action("Create", "Clientes")" class="btn btn-success">
+                        <i class="fas fa-user-plus me-1"></i>Registrar Cliente
+                    </a>
+                    <a href="@Url.Action("Create", "Vehiculos")" class="btn btn-info">
+                        <i class="fas fa-car me-1"></i>Registrar Vehículo
+                    </a>
+                    <a href="@Url.Action("Index", "Repuestos")" class="btn btn-warning">
+                        <i class="fas fa-boxes me-1"></i>Gestionar Inventario
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Repuestos Críticos -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-danger">
+                    <i class="fas fa-exclamation-triangle me-1"></i>Repuestos con Stock Crítico
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.TopRepuestosCriticos.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Repuesto</th>
+                                    <th>Stock Actual</th>
+                                    <th>Stock Mínimo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var repuesto in Model.TopRepuestosCriticos)
+                                {
+                                    var alertLevel = repuesto.StockActual == 0 ? "danger" : 
+                                                   repuesto.StockActual <= repuesto.StockMinimo ? "warning" : "success";
+                                    <tr>
+                                        <td>@repuesto.Nombre</td>
+                                        <td><span class="badge bg-@alertLevel">@repuesto.StockActual</span></td>
+                                        <td>@repuesto.StockMinimo</td>
+                                        <td>
+                                            @if (repuesto.StockActual == 0)
+                                            {
+                                                <span class="badge bg-danger">Sin Stock</span>
+                                            }
+                                            else if (repuesto.StockActual <= repuesto.StockMinimo)
+                                            {
+                                                <span class="badge bg-warning">Crítico</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Normal</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-success text-center">
+                        <i class="fas fa-check-circle me-1"></i>
+                        Todos los repuestos tienen stock adecuado
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Gráfico de ventas de los últimos 7 días
+        const ctx = document.getElementById('ventasChart').getContext('2d');
+        
+        const ventasData = [
+            @string.Join(",", Model.VentasUltimos7Dias.Select(v => $"{{x: '{v.Fecha:yyyy-MM-dd}', y: {v.Total}}}"))
+        ];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Ventas Diarias',
+                    data: ventasData,
+                    borderColor: '#4e73df',
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'MMM dd'
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Auto-refresh cada 5 minutos
+        setTimeout(function() {
+            location.reload();
+        }, 300000);
+    </script>
+}
