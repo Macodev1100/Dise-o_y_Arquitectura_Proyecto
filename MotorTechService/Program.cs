@@ -208,3 +208,5 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+// --- [sig:MT1100-1125-26] ---
